@@ -14,6 +14,7 @@ load_data <- function(data_name,
 }
 
 
+###################Passe le CD_NOM en CD_REF
 updatetaxa = function(liste_cd_nom){
   load_data("taxadata","data/TAXREF_17/TAXREFv17_FLORE_FR_SYN.csv",sep=",")
   liste_cd_nom = data.frame("CD_NOM" = liste_cd_nom)
@@ -44,3 +45,32 @@ findtaxa = function(listetaxa,
     return(CD_NOM)
   }
 }
+
+######################        A FINIRRR           ###############################"
+############################################################   find_taxaref 
+#############Réalise un match entre 2 référentiels taxonomiques
+
+find_taxaref <- function(code_taxa_entre,lb_taxa_entre,code_taxa_sortie,lb_taxa_sortie){
+  # Utilisation de str_split avec un motif pour diviser le texte
+  entre = data.frame(code_taxa_entre = code_taxa_entre,lb_taxa_entre = lb_taxa_entre)
+  sortie = data.frame(code_taxa_sortie = code_taxa_sortie,lb_taxa_sortie = lb_taxa_sortie)
+  
+  #mettre une boucle for pour répéter pour chaque espèce
+  # S'imsprirer de l'algorithme de décision dans catminat.R (celui qui sera justement remplacé)
+  texte_split <- strsplit(sortie$code_taxa_sortie, " ")[[1]]  # Utilisation de [[1]] pour extraire le vecteur de chaînes
+  
+  # Ajouter '.*' à chaque élément de texte_split
+  texte_split <- paste0(texte_split, '.*')
+  
+  # Combiner les éléments de texte_split en une seule chaîne de caractères
+  texte_pour_grep <- paste(texte_split, collapse = "")
+  
+  # Utilisation de grep pour trouver les correspondances dans la base de données
+  resultats_grep <- sortie[grep(texte_pour_grep, sortie$lb_taxa_sortie, 
+                                   ignore.case = TRUE)
+                              , ]
+  resultats_hab = resultats_grep %>% select(NOM_CITE,LB_CODE,LB_HAB_FR)
+  
+  return(resultats_hab)
+}
+###############################################################################
