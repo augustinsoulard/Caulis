@@ -50,27 +50,69 @@ findtaxa = function(listetaxa,
 ############################################################   find_taxaref 
 #############Réalise un match entre 2 référentiels taxonomiques
 
-find_taxaref <- function(code_taxa_entre,lb_taxa_entre,code_taxa_sortie,lb_taxa_sortie){
-  # Utilisation de str_split avec un motif pour diviser le texte
+find_taxaref <- function(code_taxa_entre,
+                         lb_taxa_entre,
+                         code_taxa_sortie,
+                         lb_taxa_sortie
+                         ){
+
   entre = data.frame(code_taxa_entre = code_taxa_entre,lb_taxa_entre = lb_taxa_entre)
   sortie = data.frame(code_taxa_sortie = code_taxa_sortie,lb_taxa_sortie = lb_taxa_sortie)
   
-  #mettre une boucle for pour répéter pour chaque espèce
-  # S'imsprirer de l'algorithme de décision dans catminat.R (celui qui sera justement remplacé)
-  texte_split <- strsplit(sortie$code_taxa_sortie, " ")[[1]]  # Utilisation de [[1]] pour extraire le vecteur de chaînes
+  for (i in 1:nrow(baseflor_bryo)){
+    cat(i,"\n")
+    reference = FALSE # Remise de  reference en faux
+    tryCatch({
+      
+      # Utilisation de str_split avec un motif pour diviser le texte
+      texte_split <- strsplit(sortie$code_taxa_sortie, " ")[[1]]  # Utilisation de [[1]] pour extraire le vecteur de chaînes
+      
+      # Ajouter '.*' à chaque élément de texte_split
+      texte_split <- paste0(texte_split, '.*')
+      
+      # Combiner les éléments de texte_split en une seule chaîne de caractères
+      texte_pour_grep <- paste(texte_split, collapse = "")
+      
+      # Utilisation de grep pour trouver les correspondances dans la base de données
+      resultats_grep <- entre[grep(texte_pour_grep, entre$lb_taxa_entre, 
+                                    ignore.case = TRUE)
+                               , ]
+      resultats_hab = resultats_grep %>% select(NOM_CITE,LB_CODE,LB_HAB_FR)
+      
+      t = rt_taxa_search(sciname = baseflor_bryo$NOM_SIMPLE[i],version = "17.0")
+      if(any(t$id != t$referenceId)){
+        reference = TRUE # Garder en mémoire que la taxon de base n'est pas celui de référence
+      }
+      if(ncol(t)>1){
+        #Supression des synonymes
+        if(nrow(t[t$id==t$referenceId,])>=1){t = t[t$id==t$referenceId,]}
+        #Supression des sous-espèces si nécessaire
+        if(nrow(t)>=1 & nrow(t[t$rankId=="ES",])>=1){t = t[t$rankId=="ES",]}
+        #Supression des hybrides
+        if(str_detect(baseflor_bryo$NOM_SIMPLE[i],"[:blank:]x[:blank:]")==FALSE){
+          t = t[!str_detect(t$scientificName,"[:blank:]x[:blank:]"),]
+        }
+        if(reference == TRUE){
+          t = rt_taxa_search(id = t$referenceId[1],version = "16.0")
+        }
+        
+        #Attribution des valeurs de CD_NOM et NOM_VALIDE
+        baseflor_bryo$CD_NOM[i] = t$referenceId[1]
+        baseflor_bryo$NOM_VALIDE[i] = t$scientificName[1]}else{
+          baseflor_bryo$CD_NOM[i] = "NOMATCH"
+          baseflor_bryo$NOM_VALIDE[i] = "NOMATCH"
+        }
+      
+    }, error = function(e) {
+      baseflor_bryo$CD_NOM[i] = "NOMATCH"
+      baseflor_bryo$NOM_VALIDE[i] = "NOMATCH"
+    })
+    
+  }
   
-  # Ajouter '.*' à chaque élément de texte_split
-  texte_split <- paste0(texte_split, '.*')
+
+
   
-  # Combiner les éléments de texte_split en une seule chaîne de caractères
-  texte_pour_grep <- paste(texte_split, collapse = "")
-  
-  # Utilisation de grep pour trouver les correspondances dans la base de données
-  resultats_grep <- sortie[grep(texte_pour_grep, sortie$lb_taxa_sortie, 
-                                   ignore.case = TRUE)
-                              , ]
-  resultats_hab = resultats_grep %>% select(NOM_CITE,LB_CODE,LB_HAB_FR)
-  
-  return(resultats_hab)
+  return(XXXXXXXXXXXXXXXX)
 }
 ###############################################################################
