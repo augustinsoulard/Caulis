@@ -6,7 +6,7 @@ if(!require("sf")){install.packages("sf")} ; library("sf")
 
 #Chargement des donnees
 
-FLORE = read.dbf(paste0(path,"Flore/Flore.dbf"))
+FLORE = read.dbf("Flore/Flore.dbf")
 FLORE$id = 1:nrow(FLORE)
 # RP = read.dbf("Flore/FloreDocType.dbf")
 # FLORERP = read.dbf("Flore/FloreDocType.dbf")
@@ -63,7 +63,30 @@ for(i in 1:nrow(FLORE)){
 
 
 
-HAB = read.dbf(paste0(path,"Habitats/RELEVE_HABITAT.dbf"))
+HAB = read.dbf("Habitats/RELEVE_HABITAT.dbf")
+
+HAB$photo1 = paste0(dossier_destination,"/",str_split(HAB$photo1, "/", simplify = TRUE)[,2])
+HAB$photo2 = paste0(dossier_destination,"/",str_split(HAB$photo2, "/", simplify = TRUE)[,2])
+HAB$photo3 = paste0(dossier_destination,"/",str_split(HAB$photo3, "/", simplify = TRUE)[,2])
+HAB$photo4 = paste0(dossier_destination,"/",str_split(HAB$photo4, "/", simplify = TRUE)[,2])
+HAB$photo5 = paste0(dossier_destination,"/",str_split(HAB$photo5, "/", simplify = TRUE)[,2])
+
+
+HAB$HABLABEL_COR = HAB$hablabel %>% str_remove_all("<em>") %>% str_remove_all("</em>")
+
+HAB$id = 1:nrow(HAB)
+
+for(i in 1:nrow(HAB)){
+  if(HAB$photo1[i] %in% paste0("DCIM_RENOM/",FILES)){
+    file.rename(as.character(HAB$photo1[i]),paste0("DCIM_RENOM/",HAB$HABLABEL_COR[i],HAB$id[i],".jpg"))
+  }
+  if(HAB$photo2[i] %in% paste0("DCIM_RENOM/",FILES)){
+    file.rename(as.character(HAB$photo2[i]),paste0("DCIM_RENOM/",HAB$HABLABEL_COR[i],HAB$id[i],"_2.jpg"))
+  }
+}
+
+#### HABITATS_POLYGONES
+HAB = read.dbf("Habitats/HABITATS_POLYGONES.dbf")
 
 HAB$photo1 = paste0(dossier_destination,"/",str_split(HAB$photo1, "/", simplify = TRUE)[,2])
 HAB$photo2 = paste0(dossier_destination,"/",str_split(HAB$photo2, "/", simplify = TRUE)[,2])
