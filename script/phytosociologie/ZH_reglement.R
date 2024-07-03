@@ -1,5 +1,5 @@
 #Chargement des données ZH
-Flore_ZH <- read.csv2("~/GitHub/HABITATS/04_AUTRES_OUTILS/Rphytosocio/Data/FLore_ZH.csv",colClasses = "character")
+Flore_ZH <- read.csv2("data\ZH/FLore_ZH.csv",colClasses = "character")
 
 #Jointure de la flore indicatrice zone humide
 DATA_FLORE_ZH = left_join(DATAbaseflorJOIN,Flore_ZH,by="CD_NOM")
