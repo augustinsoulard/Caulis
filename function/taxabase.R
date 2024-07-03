@@ -1,4 +1,5 @@
 if(!require("readxl")){install.packages("readxl")} ; library("readxl")
+if(!require("readODS")){install.packages("readODS")} ; library("readODS")
 if(!require("tidyverse")){install.packages("tidyverse")} ; library("tidyverse")
 
 # Permet de charger un tableay en attribuant un nom 
@@ -17,6 +18,8 @@ load_data <- function(data_name,
 ###################Passe le CD_NOM en CD_REF
 updatetaxa = function(liste_cd_nom){
   load_data("taxadata","data/TAXREF_17/TAXREFv17_FLORE_FR_SYN.csv",sep=",")
+  taxadata$CD_NOM = as.character(taxadata$CD_NOM)
+  liste_cd_nom = as.character(liste_cd_nom)
   liste_cd_nom = data.frame("CD_NOM" = liste_cd_nom)
   liste_cd_nom_join = left_join(liste_cd_nom,taxadata,by="CD_NOM") %>% select(CD_REF)
   CD_NOM_actuel = liste_cd_nom_join$CD_REF
@@ -46,73 +49,66 @@ findtaxa = function(listetaxa,
   }
 }
 
-######################        A FINIRRR           ###############################"
 ############################################################   find_taxaref 
 #############Réalise un match entre 2 référentiels taxonomiques
 
-find_taxaref <- function(code_taxa_entre,
-                         lb_taxa_entre,
-                         code_taxa_sortie,
-                         lb_taxa_sortie
-                         ){
+find_taxaref <- function(
+                         lb_taxa_entree,code_taxa_entree = NA, ref='taxref'
+){
+  entree = data.frame(code_taxa_entree = code_taxa_entree,lb_taxa_entree = lb_taxa_entree)
 
-  entre = data.frame(code_taxa_entre = code_taxa_entre,lb_taxa_entre = lb_taxa_entre)
-  sortie = data.frame(code_taxa_sortie = code_taxa_sortie,lb_taxa_sortie = lb_taxa_sortie)
+  if(ref == 'taxref'){
+    load_data("taxref","data/TAXREF_17/TAXREFv17_FLORE_FR_SYN.csv",sep=",")
+    taxaref = taxref
+  }
+
+  #Préparation du tableau entree
+  entree <- entree %>%
+    mutate(CD_NOM = NA_character_)
+  entree <- entree %>%
+    mutate(LB_NOM = NA_character_)
+  entree <- entree %>%
+    mutate(RANG = NA_character_)
   
-  for (i in 1:nrow(baseflor_bryo)){
-    cat(i,"\n")
-    reference = FALSE # Remise de  reference en faux
-    tryCatch({
-      
-      # Utilisation de str_split avec un motif pour diviser le texte
-      texte_split <- strsplit(sortie$code_taxa_sortie, " ")[[1]]  # Utilisation de [[1]] pour extraire le vecteur de chaînes
-      
-      # Ajouter '.*' à chaque élément de texte_split
-      texte_split <- paste0(texte_split, '.*')
-      
-      # Combiner les éléments de texte_split en une seule chaîne de caractères
-      texte_pour_grep <- paste(texte_split, collapse = "")
-      
-      # Utilisation de grep pour trouver les correspondances dans la base de données
-      resultats_grep <- entre[grep(texte_pour_grep, entre$lb_taxa_entre, 
-                                    ignore.case = TRUE)
-                               , ]
-      resultats_hab = resultats_grep %>% select(NOM_CITE,LB_CODE,LB_HAB_FR)
-      
-      t = rt_taxa_search(sciname = baseflor_bryo$NOM_SIMPLE[i],version = "17.0")
-      if(any(t$id != t$referenceId)){
-        reference = TRUE # Garder en mémoire que la taxon de base n'est pas celui de référence
-      }
-      if(ncol(t)>1){
-        #Supression des synonymes
-        if(nrow(t[t$id==t$referenceId,])>=1){t = t[t$id==t$referenceId,]}
-        #Supression des sous-espèces si nécessaire
-        if(nrow(t)>=1 & nrow(t[t$rankId=="ES",])>=1){t = t[t$rankId=="ES",]}
-        #Supression des hybrides
-        if(str_detect(baseflor_bryo$NOM_SIMPLE[i],"[:blank:]x[:blank:]")==FALSE){
-          t = t[!str_detect(t$scientificName,"[:blank:]x[:blank:]"),]
-        }
-        if(reference == TRUE){
-          t = rt_taxa_search(id = t$referenceId[1],version = "16.0")
-        }
-        
-        #Attribution des valeurs de CD_NOM et NOM_VALIDE
-        baseflor_bryo$CD_NOM[i] = t$referenceId[1]
-        baseflor_bryo$NOM_VALIDE[i] = t$scientificName[1]}else{
-          baseflor_bryo$CD_NOM[i] = "NOMATCH"
-          baseflor_bryo$NOM_VALIDE[i] = "NOMATCH"
-        }
-      
-    }, error = function(e) {
-      baseflor_bryo$CD_NOM[i] = "NOMATCH"
-      baseflor_bryo$NOM_VALIDE[i] = "NOMATCH"
-    })
-    
+  # Correction des adjectifs de rangs
+  entree$lb_taxa_entree = str_replace(entree$lb_taxa_entree,'ssp.','subsp.')
+  
+  # Supprimer les mots entre parenthèses
+  entree$lb_taxa_entree = gsub("\\(.*?\\)", "", entree$lb_taxa_entree)
+  entree$lb_taxa_entree = gsub("\\b(?!subsp\\.|var\\.)\\w+\\.", "", entree$lb_taxa_entree, perl=TRUE)
+  entree$lb_taxa_entree = gsub("\\s+", " ", entree$lb_taxa_entree)
+  
+  # Ajoute une colonne de RANG au tableau entree
+  for(i in 1:nrow(entree)){
+    if(str_detect(entree$lb_taxa_entree[i],'subsp.')){
+      entree$RANG[i] = 'SSES'
+    }
+    else if(str_detect(entree$lb_taxa_entree[i],'var.')){
+      entree$RANG[i] = 'VAR'
+    }
+    else{entree$RANG[i] = 'ES'}
   }
   
-
-
   
-  return(XXXXXXXXXXXXXXXX)
+  for (i in 1:nrow(taxaref)) {
+    cat(i,'/',nrow(taxadata),'\n')
+    lb_nom <- taxaref$LB_NOM[i]
+    cd_nom <- taxaref$CD_NOM[i]
+    
+    # Trouver les correspondances
+    matches <- str_detect(entree[entree$RANG == taxadata$RANG[i],]$lb_taxa_entree, fixed(lb_nom))
+    
+    # Mettre à jour la colonne CD_NOM pour les correspondances trouvées
+    entree[entree$RANG == taxadata$RANG[i],]$CD_NOM[matches] <- cd_nom
+    entree[entree$RANG == taxadata$RANG[i],]$LB_NOM[matches] <- lb_nom
+  }
+  entree[is.na(entree$CD_NOM),]$CD_NOM = '_NOMATCH'
+  entree[is.na(entree$LB_NOM),]$LB_NOM = '_NOMATCH'
+  
+  #Mise à jour du code CD_REF
+  entree$CD_REF = updatetaxa(entree$CD_NOM)
+  
+  return(entree)
 }
-###############################################################################
+
+
