@@ -72,18 +72,82 @@ HAB$photo4 = paste0(dossier_destination,"/",str_split(HAB$photo4, "/", simplify 
 HAB$photo5 = paste0(dossier_destination,"/",str_split(HAB$photo5, "/", simplify = TRUE)[,2])
 
 
-HAB$HABLABEL_COR = HAB$hablabel %>% str_remove_all("<em>") %>% str_remove_all("</em>")
+######################Création de hablegend
+HAB$hablegend = NA_character_
+HAB$eunis1 = as.character(HAB$eunis1)
+HAB$eunis2 = as.character(HAB$eunis2)
+HAB$hablabel = as.character(HAB$hablabel)
+
+left_until_dash <- function(x) {
+  if (is.na(x)){return("")} else{
+    y = str_sub(x, 1, str_locate(x, "-")[1] - 1)
+    return(y)
+  }
+}
+
+# Fonction pour obtenir la partie droite d'une chaîne après le premier tiret
+right_after_dash <- function(x) {
+  if (is.na(x)) return("")
+  str_sub(x, str_locate(x, "-")[1] + 1, str_length(x))
+}
+
+for(i in 1:nrow(HAB)){
+  if(is.na(HAB$eunis1[i])){
+    HAB$hablegend[i]  = HAB$hablabel[i]
+  } else {
+    if(is.na(HAB$eunis2[i])){
+      if(is.na(HAB$hablabel[i])){
+        HAB$hablegend[i] = HAB$eunis1[i]
+      } else{
+        HAB$hablegend[i] = paste0(left_until_dash(HAB$eunis1[i]),'-',hablabel[i])
+      }
+      
+    }else{
+      if(is.na(HAB$hablabel[i])){
+        HAB$hablegend[i] = paste0(left_until_dash(HAB$eunis1[i]),'x',left_until_dash(HAB$eunis2[i]),'-',
+                               right_after_dash(HAB$eunis1[i]),' x ',right_after_dash(HAB$eunis2[i]))
+      } else{
+        HAB$hablegend[i] = paste0(left_until_dash(HAB$eunis1[i]),'x',left_until_dash(HAB$eunis2[i]),'-',
+                                  HAB$hablabel[i])
+      }
+    }
+  }
+}
+
+HAB$hablegend = str_replace_all(HAB$hablegend, "<em>|</em>", "")
+
+
+############################################
 
 HAB$id = 1:nrow(HAB)
 
 for(i in 1:nrow(HAB)){
   if(HAB$photo1[i] %in% paste0("DCIM_RENOM/",FILES)){
-    file.rename(as.character(HAB$photo1[i]),paste0("DCIM_RENOM/",HAB$HABLABEL_COR[i],HAB$id[i],".jpg"))
+    file.rename(as.character(HAB$photo1[i]),paste0("DCIM_RENOM/",HAB$hablegend[i],HAB$id[i],".jpg"))
   }
   if(HAB$photo2[i] %in% paste0("DCIM_RENOM/",FILES)){
-    file.rename(as.character(HAB$photo2[i]),paste0("DCIM_RENOM/",HAB$HABLABEL_COR[i],HAB$id[i],"_2.jpg"))
+    file.rename(as.character(HAB$photo2[i]),paste0("DCIM_RENOM/",HAB$hablegend[i],HAB$id[i],"_2.jpg"))
+  }
+  if(HAB$photo3[i] %in% paste0("DCIM_RENOM/",FILES)){
+    file.rename(as.character(HAB$photo3[i]),paste0("DCIM_RENOM/",HAB$hablegend[i],HAB$id[i],"_2.jpg"))
+  }
+  if(HAB$photo4[i] %in% paste0("DCIM_RENOM/",FILES)){
+    file.rename(as.character(HAB$photo4[i]),paste0("DCIM_RENOM/",HAB$hablegend[i],HAB$id[i],"_2.jpg"))
+  }
+  if(HAB$photo5[i] %in% paste0("DCIM_RENOM/",FILES)){
+    file.rename(as.character(HAB$photo5[i]),paste0("DCIM_RENOM/",HAB$hablegend[i],HAB$id[i],"_2.jpg"))
   }
 }
+
+
+
+
+
+
+
+
+
+
 
 #### HABITATS_POLYGONES
 HAB = read.dbf("Habitats/HABITATS_POLYGONES.dbf")
