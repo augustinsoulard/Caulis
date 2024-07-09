@@ -4,7 +4,7 @@ if(!require("RVAideMemoire")){install.packages("RVAideMemoire")} ; library("RVAi
 if(!require("vegan")){install.packages("vegan")} ; library("vegan")
 source("function/taxabase.R")
 
-Flore = read.dbf("FLore/FloreDocTypev2.dbf")
+Flore = read.dbf("FLore/Flore.dbf")
 
 
 # Prépration du tableau de relevé à partir du KIT BOTA QFIELD
