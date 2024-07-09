@@ -80,6 +80,7 @@ find_taxaref <- function(
   
   # Ajoute une colonne de RANG au tableau entree
   for(i in 1:nrow(entree)){
+    cat('RANG : ',i,'/',nrow(entree),'\n')
     if(str_detect(entree$lb_taxa_entree[i],'subsp.')){
       entree$RANG[i] = 'SSES'
     }
@@ -91,16 +92,16 @@ find_taxaref <- function(
   
   
   for (i in 1:nrow(taxaref)) {
-    cat(i,'/',nrow(taxadata),'\n')
+    cat('RATACH : ',i,'/',nrow(taxaref),'\n')
     lb_nom <- taxaref$LB_NOM[i]
     cd_nom <- taxaref$CD_NOM[i]
     
     # Trouver les correspondances
-    matches <- str_detect(entree[entree$RANG == taxadata$RANG[i],]$lb_taxa_entree, fixed(lb_nom))
+    matches <- str_detect(entree[entree$RANG == taxaref$RANG[i],]$lb_taxa_entree, fixed(lb_nom))
     
     # Mettre à jour la colonne CD_NOM pour les correspondances trouvées
-    entree[entree$RANG == taxadata$RANG[i],]$CD_NOM[matches] <- cd_nom
-    entree[entree$RANG == taxadata$RANG[i],]$LB_NOM[matches] <- lb_nom
+    entree[entree$RANG == taxaref$RANG[i],]$CD_NOM[matches] <- cd_nom
+    entree[entree$RANG == taxaref$RANG[i],]$LB_NOM[matches] <- lb_nom
   }
   entree[is.na(entree$CD_NOM),]$CD_NOM = '_NOMATCH'
   entree[is.na(entree$LB_NOM),]$LB_NOM = '_NOMATCH'
