@@ -17,11 +17,11 @@ load_data <- function(data_name,
 
 ###################Passe le CD_NOM en CD_REF
 updatetaxa = function(liste_cd_nom){
-  load_data("taxadata","data/TAXREF_17/TAXREFv17_FLORE_FR_SYN.csv",sep=",")
-  taxadata$CD_NOM = as.character(taxadata$CD_NOM)
+  load_data("TAXREFv17_FLORE_FR_SYN","data/TAXREF_17/TAXREFv17_FLORE_FR_SYN.csv",sep=",")
+  TAXREFv17_FLORE_FR_SYN$CD_NOM = as.character(TAXREFv17_FLORE_FR_SYN$CD_NOM)
   liste_cd_nom = as.character(liste_cd_nom)
   liste_cd_nom = data.frame("CD_NOM" = liste_cd_nom)
-  liste_cd_nom_join = left_join(liste_cd_nom,taxadata,by="CD_NOM") %>% select(CD_REF)
+  liste_cd_nom_join = left_join(liste_cd_nom,TAXREFv17_FLORE_FR_SYN,by="CD_NOM") %>% select(CD_REF)
   CD_NOM_actuel = liste_cd_nom_join$CD_REF
   return(CD_NOM_actuel)
 }
@@ -34,19 +34,15 @@ findtaxa = function(listetaxa,
                     actualisation_CD_NOM = TRUE){
  
    if(referenciel == "TAXREF_70"){
+     
      load_data("taxadata","data/TAXREF_17/TAXREFv17_FLORE_FR.csv",sep=",")
    }
   if(correspondance_type=="simple"){
     listetaxa = data.frame("LB_NOM" = listetaxa)
     listetaxa_join = left_join(listetaxa,taxadata,by="LB_NOM")
     CD_NOM = listetaxa_join$CD_NOM
-    
-    #Actualisation du CD_NOM
-    if(actualisation_CD_NOM == TRUE){
-      CD_NOM = updatetaxa(CD_NOM)      
     }
     return(CD_NOM)
-  }
 }
 
 ############################################################   find_taxaref 

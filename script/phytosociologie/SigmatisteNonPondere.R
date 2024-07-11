@@ -3,16 +3,43 @@ if(!require("foreign")){install.packages("foreign")} ; library("foreign") # Pour
 if(!require("RVAideMemoire")){install.packages("RVAideMemoire")} ; library("RVAideMemoire")
 if(!require("vegan")){install.packages("vegan")} ; library("vegan")
 source("function/taxabase.R")
+source("function/habref_function.R")
 
+
+#Chargement des données  KIT BOTA QFIELD
 Flore = read.dbf("FLore/Flore.dbf")
 
 
 # Prépration du tableau de relevé à partir du KIT BOTA QFIELD
-FloreRELEVE = Flore %>% filter(!is.na(RELEVE)==TRUE) %>% select(RELEVE,LB_NOM = NomComplet) %>% mutate(P = 1)
-FloreRELEVE$CD_NOM = findtaxa(FloreRELEVE$LB_NOM)
+FloreRELEVE = Flore %>% filter(!is.na(releve)==TRUE) %>% select(releve,lb_nom) %>% mutate(P = 1)
+FloreRELEVE$CD_NOM = findtaxa(FloreRELEVE$lb_nom)
+
+
+#Charement de taxref
+TAXREFv17 = read.csv("data/TAXREF_17/TAXREFv17_FLORE_FR_SYN.csv",h=T)
+TAXREFv17tojoin = TAXREFv17 %>% select(CD_NOM, LB_NOM)
+
+#Chargement des données de références
+
+PVF2 = taxon_hab(28)
+PVF2$CD_NOM = updatetaxa(PVF2$CD_NOM)
+PVF2 = PVF2[!match(PVF2$CD_NOM,FloreRELEVE$CD_NOM,nomatch=0)==0,]
+PVF2 = PVF2 %>% filter(!is.na(CD_NOM))
+PVF2 = left_join(PVF2,TAXREFv17tojoin,by='CD_NOM')
+
+#Comptage des occurences des syntaxons en correspondance aux espèces
+PVF2 %>% count(LB_HAB_FR,sort = T)
+
+
+
+PVF2contingence = PVF2 %>% select(LB_HAB_FR,LB_NOM) %>% mutate(P = 1) %>%
+  pivot_wider(names_from = LB_HAB_FR, values_from = P,values_fill = list(P = 0))
 
 #Préparation du tableau de contingence
 tabContingence = FloreRELEVE %>% pivot_wider(names_from = RELEVE, values_from = P, values_fill = list(P = 0))
+tabContingence = left_join(tabContingence,PVF2contingence,by="LB_NOM")
+
+#Nommer les lignes par les noms d'espèces
 row.names(tabContingence) = tabContingence$LB_NOM
 
 #Création du tableau DEDOU
