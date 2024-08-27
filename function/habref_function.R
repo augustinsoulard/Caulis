@@ -147,4 +147,10 @@ hab_match = function(data_flore,
   
   
 }
-
+###################################################### contingFclipboard
+#lecture de tableau de contingence pour des relevés phytosociologiques
+contingFclipboard = function(){
+  tabContingenceCLIP = read.delim("clipboard", header = TRUE)
+  tabContingenceCLIP = tabContingenceCLIP[rowSums(tabContingenceCLIP[,-1])>0,]
+  return(tabContingenceCLIP)
+}
