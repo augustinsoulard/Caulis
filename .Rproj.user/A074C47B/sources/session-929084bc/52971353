@@ -3,7 +3,7 @@
     "path": "D:/Github/Caulis/script/catminat.R",
     "project_path": "script/catminat.R",
     "type": "r_source",
-    "hash": "3551239329",
+    "hash": "0",
     "contents": "",
     "dirty": false,
     "created": 1724140043974.0,
@@ -11,7 +11,9 @@
     "relative_order": 7,
     "properties": {
         "source_window_id": "",
-        "Source": "Source"
+        "Source": "Source",
+        "cursorPosition": "7,0",
+        "scrollLine": "0"
     },
     "folds": "",
     "lastKnownWriteTime": 1718648171,
