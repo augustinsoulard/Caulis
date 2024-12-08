@@ -8,7 +8,7 @@ if(!require("tidyverse")){install.packages("tidyverse")} ; library("tidyverse")
 
 
 
-dossier_photos <- "D:/Association/SLP/Ateliers/20241110_Bryologie/QFLORE/DCIM"
+dossier_photos <- "DCIM"
 photos <- list.files(dossier_photos, pattern = "\\.jpe?g$", full.names = TRUE)
 
 
@@ -16,13 +16,14 @@ metadata <- read_exif(photos)
 
 
 ###Lecture geopackage
-fichier_gpkg <- "D:/Association/SLP/Ateliers/20241110_Bryologie/QFLORE/donnees.gpkg"
+fichier_gpkg <- "donnees.gpkg"
 photo <- st_read(fichier_gpkg,layer = "photo")
 donnees <- st_read(fichier_gpkg,layer = "Flore_P")
 photo = left_join(photo,donnees,by=c("Reference"="uuid"))
 photo$geometry = as.character(photo$geometry)
 photo$GPSLatitude = 0
 photo$GPSLongitude = 0
+photo = photo %>% filter(Date == '2024-12-07')
 
 for( i in 1:nrow(photo)){
   cat(i,"\n")
