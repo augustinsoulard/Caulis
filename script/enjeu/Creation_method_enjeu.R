@@ -294,3 +294,4 @@ TAB_TO_EXPORT=join_BDD_IMG
 
 #Enregistrement du tableau a integrer à la methode enjeu PACA
 write.csv(TAB_TO_EXPORT,file = "TAB_TO_EXPORT.csv",row.names = F,fileEncoding = "UTF-8",na="-")
+
