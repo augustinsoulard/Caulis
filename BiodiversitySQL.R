@@ -18,6 +18,13 @@ con <- dbConnect(RPostgres::Postgres(), dbname = "BiodiversitySQL")
 # Vérifier la connexion
 dbListTables(con)
 
+# Voir toutes les tables
+dbGetQuery(con, "
+  SELECT table_schema, table_name 
+  FROM information_schema.tables 
+  WHERE table_type = 'BASE TABLE'
+    AND table_schema NOT IN ('pg_catalog', 'information_schema')
+")
 
 # Les requêtes ####
 data <- dbGetQuery(con, "SELECT * FROM taxasearch LIMIT 10;")
