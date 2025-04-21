@@ -3,11 +3,15 @@ FROM bibliotaxa.point_silene ps
 JOIN (
     SELECT ST_Union(ST_Buffer(geom, 100)) AS geom_buffer
     FROM projet.zone_etude
-    WHERE code IN (24, 29)
+    WHERE code IN (19, 20,41)
 ) AS buffer_zone
 ON ST_Intersects(ps.geom, buffer_zone.geom_buffer);
 
 
+
+
+
+-- Ne fonctionne pas dans Qgis
 SELECT 
     ps.*, 
     mep.*, 
