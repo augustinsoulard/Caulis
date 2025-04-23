@@ -1,0 +1,216 @@
+<!DOCTYPE model>
+<Option type="Map">
+  <Option name="children" type="Map">
+    <Option name="native:package_1" type="Map">
+      <Option name="active" type="bool" value="true"/>
+      <Option name="alg_config"/>
+      <Option name="alg_id" type="QString" value="native:package"/>
+      <Option name="color" type="QString" value=""/>
+      <Option name="comment" type="Map">
+        <Option name="color" type="QString" value=""/>
+        <Option name="component_description" type="QString" value=""/>
+        <Option name="component_height" type="double" value="60"/>
+        <Option name="component_pos_x" type="double" value="540"/>
+        <Option name="component_pos_y" type="double" value="215"/>
+        <Option name="component_width" type="double" value="100"/>
+        <Option name="outputs_collapsed" type="bool" value="true"/>
+        <Option name="parameters_collapsed" type="bool" value="true"/>
+      </Option>
+      <Option name="component_description" type="QString" value="Empaquetage de couches"/>
+      <Option name="component_height" type="double" value="30"/>
+      <Option name="component_pos_x" type="double" value="310.47745544378904"/>
+      <Option name="component_pos_y" type="double" value="249.97343568042962"/>
+      <Option name="component_width" type="double" value="200"/>
+      <Option name="dependencies"/>
+      <Option name="id" type="QString" value="native:package_1"/>
+      <Option name="outputs" type="Map">
+        <Option name="Geopackage" type="Map">
+          <Option name="child_id" type="QString" value="native:package_1"/>
+          <Option name="color" type="QString" value=""/>
+          <Option name="comment" type="Map">
+            <Option name="color" type="QString" value=""/>
+            <Option name="component_description" type="QString" value=""/>
+            <Option name="component_height" type="double" value="60"/>
+            <Option name="component_pos_x" type="double" value="0"/>
+            <Option name="component_pos_y" type="double" value="0"/>
+            <Option name="component_width" type="double" value="100"/>
+            <Option name="outputs_collapsed" type="bool" value="true"/>
+            <Option name="parameters_collapsed" type="bool" value="true"/>
+          </Option>
+          <Option name="component_description" type="QString" value="Geopackage"/>
+          <Option name="component_height" type="double" value="30"/>
+          <Option name="component_pos_x" type="double" value="378.6332998058202"/>
+          <Option name="component_pos_y" type="double" value="346.6400811556641"/>
+          <Option name="component_width" type="double" value="200"/>
+          <Option name="default_value" type="QString" value=""/>
+          <Option name="mandatory" type="bool" value="true"/>
+          <Option name="name" type="QString" value="Geopackage"/>
+          <Option name="output_name" type="QString" value="OUTPUT"/>
+          <Option name="outputs_collapsed" type="bool" value="true"/>
+          <Option name="parameters_collapsed" type="bool" value="true"/>
+        </Option>
+      </Option>
+      <Option name="outputs_collapsed" type="bool" value="true"/>
+      <Option name="parameters_collapsed" type="bool" value="true"/>
+      <Option name="params" type="Map">
+        <Option name="EXPORT_RELATED_LAYERS" type="List">
+          <Option type="Map">
+            <Option name="source" type="int" value="2"/>
+            <Option name="static_value" type="bool" value="false"/>
+          </Option>
+        </Option>
+        <Option name="LAYERS" type="List">
+          <Option type="Map">
+            <Option name="child_id" type="QString" value="qgis:postgisexecuteandloadsql_1"/>
+            <Option name="output_name" type="QString" value="OUTPUT"/>
+            <Option name="source" type="int" value="1"/>
+          </Option>
+        </Option>
+        <Option name="OVERWRITE" type="List">
+          <Option type="Map">
+            <Option name="source" type="int" value="2"/>
+            <Option name="static_value" type="bool" value="false"/>
+          </Option>
+        </Option>
+        <Option name="SAVE_METADATA" type="List">
+          <Option type="Map">
+            <Option name="source" type="int" value="2"/>
+            <Option name="static_value" type="bool" value="true"/>
+          </Option>
+        </Option>
+        <Option name="SAVE_STYLES" type="List">
+          <Option type="Map">
+            <Option name="source" type="int" value="2"/>
+            <Option name="static_value" type="bool" value="true"/>
+          </Option>
+        </Option>
+        <Option name="SELECTED_FEATURES_ONLY" type="List">
+          <Option type="Map">
+            <Option name="source" type="int" value="2"/>
+            <Option name="static_value" type="bool" value="false"/>
+          </Option>
+        </Option>
+      </Option>
+    </Option>
+    <Option name="qgis:postgisexecuteandloadsql_1" type="Map">
+      <Option name="active" type="bool" value="true"/>
+      <Option name="alg_config"/>
+      <Option name="alg_id" type="QString" value="qgis:postgisexecuteandloadsql"/>
+      <Option name="color" type="QString" value=""/>
+      <Option name="comment" type="Map">
+        <Option name="color" type="QString" value=""/>
+        <Option name="component_description" type="QString" value=""/>
+        <Option name="component_height" type="double" value="60"/>
+        <Option name="component_pos_x" type="double" value="320"/>
+        <Option name="component_pos_y" type="double" value="115"/>
+        <Option name="component_width" type="double" value="100"/>
+        <Option name="outputs_collapsed" type="bool" value="true"/>
+        <Option name="parameters_collapsed" type="bool" value="true"/>
+      </Option>
+      <Option name="component_description" type="QString" value="PostgreSQL exécuter et charger SQL"/>
+      <Option name="component_height" type="double" value="30"/>
+      <Option name="component_pos_x" type="double" value="168.6437168675391"/>
+      <Option name="component_pos_y" type="double" value="132.80228036792965"/>
+      <Option name="component_width" type="double" value="200"/>
+      <Option name="dependencies"/>
+      <Option name="id" type="QString" value="qgis:postgisexecuteandloadsql_1"/>
+      <Option name="outputs"/>
+      <Option name="outputs_collapsed" type="bool" value="true"/>
+      <Option name="parameters_collapsed" type="bool" value="true"/>
+      <Option name="params" type="Map">
+        <Option name="DATABASE" type="List">
+          <Option type="Map">
+            <Option name="source" type="int" value="2"/>
+            <Option name="static_value" type="QString" value="BiodiversitySQL"/>
+          </Option>
+        </Option>
+        <Option name="GEOMETRY_FIELD" type="List">
+          <Option type="Map">
+            <Option name="source" type="int" value="2"/>
+            <Option name="static_value" type="QString" value="geom"/>
+          </Option>
+        </Option>
+        <Option name="ID_FIELD" type="List">
+          <Option type="Map">
+            <Option name="source" type="int" value="2"/>
+            <Option name="static_value" type="QString" value="id"/>
+          </Option>
+        </Option>
+        <Option name="SQL" type="List">
+          <Option type="Map">
+            <Option name="expression" type="QString" value=" concat('SELECT ps.*&#xd;&#xa;FROM occsol.&quot;MOS_MAMP_2017&quot; ps&#xd;&#xa;JOIN (&#xd;&#xa;    SELECT ST_Transform(&#xd;&#xa;               ST_Union(&#xd;&#xa;                   ST_Buffer(ST_Transform(geom, 2154), 100)&#xd;&#xa;               ), 2154&#xd;&#xa;           ) AS geom_buffer&#xd;&#xa;    FROM projet.zone_etude&#xd;&#xa;    WHERE code IN (' ,@etude,')&#xd;&#xa;) AS buffer_zone&#xd;&#xa;ON ST_Intersects(ST_Transform(ps.geom, 2154), buffer_zone.geom_buffer);') "/>
+            <Option name="source" type="int" value="3"/>
+          </Option>
+        </Option>
+      </Option>
+    </Option>
+  </Option>
+  <Option name="designerParameterValues" type="Map">
+    <Option name="geopackage" type="QString" value="G:/.shortcut-targets-by-id/1AqE3ojfAbh_eNBVvcoQGSUa8TOft94Ue/AUGULIEN/DURANCE SMAVD 2025/MARCHES_SUBSEQUENTS_2025/MaSu_1_LAROQUE_VéloRoute/CARTO/occsol.gpkg"/>
+  </Option>
+  <Option name="groupBoxes"/>
+  <Option name="help"/>
+  <Option name="internal_version" type="QString" value="Version2"/>
+  <Option name="modelVariables"/>
+  <Option name="model_group" type="QString" value=""/>
+  <Option name="model_name" type="QString" value="Modèle"/>
+  <Option name="outputGroup" type="QString" value=""/>
+  <Option name="outputOrder"/>
+  <Option name="parameterDefinitions" type="Map">
+    <Option name="etude" type="Map">
+      <Option name="default" type="QString" value="24,29"/>
+      <Option name="defaultGui" type="invalid"/>
+      <Option name="description" type="QString" value="etude"/>
+      <Option name="flags" type="int" value="0"/>
+      <Option name="help" type="QString" value=""/>
+      <Option name="metadata"/>
+      <Option name="multiline" type="bool" value="false"/>
+      <Option name="name" type="QString" value="etude"/>
+      <Option name="parameter_type" type="QString" value="string"/>
+    </Option>
+    <Option name="geopackage" type="Map">
+      <Option name="create_by_default" type="bool" value="true"/>
+      <Option name="default" type="QString" value=""/>
+      <Option name="defaultGui" type="invalid"/>
+      <Option name="description" type="QString" value="Geopackage"/>
+      <Option name="file_filter" type="QString" value="Fichier GeoPackage (*.gpkg)"/>
+      <Option name="flags" type="int" value="0"/>
+      <Option name="help" type="QString" value=""/>
+      <Option name="metadata" type="Map">
+        <Option name="_modelChildId" type="QString" value="native:package_1"/>
+        <Option name="_modelChildOutputName" type="QString" value="Geopackage"/>
+        <Option name="_modelChildProvider" type="QString" value="native"/>
+        <Option name="widget_wrapper" type="Map">
+          <Option name="dontconfirmoverwrite" type="bool" value="true"/>
+        </Option>
+      </Option>
+      <Option name="name" type="QString" value="geopackage"/>
+      <Option name="parameter_type" type="QString" value="fileDestination"/>
+      <Option name="supports_non_file_outputs" type="bool" value="true"/>
+    </Option>
+  </Option>
+  <Option name="parameterOrder"/>
+  <Option name="parameters" type="Map">
+    <Option name="etude" type="Map">
+      <Option name="color" type="QString" value=""/>
+      <Option name="comment" type="Map">
+        <Option name="color" type="QString" value=""/>
+        <Option name="component_description" type="QString" value=""/>
+        <Option name="component_height" type="double" value="60"/>
+        <Option name="component_pos_x" type="double" value="312.2866137279688"/>
+        <Option name="component_pos_y" type="double" value="217.9870689944533"/>
+        <Option name="component_width" type="double" value="100"/>
+        <Option name="outputs_collapsed" type="bool" value="true"/>
+        <Option name="parameters_collapsed" type="bool" value="true"/>
+      </Option>
+      <Option name="component_description" type="QString" value="etude"/>
+      <Option name="component_height" type="double" value="30"/>
+      <Option name="component_pos_x" type="double" value="116.71898005933602"/>
+      <Option name="component_pos_y" type="double" value="45.80111875746093"/>
+      <Option name="component_width" type="double" value="200"/>
+      <Option name="name" type="QString" value="etude"/>
+      <Option name="outputs_collapsed" type="bool" value="true"/>
+      <Option name="parameters_collapsed" type="bool" value="true"/>
+    </Option>
+  </Option>
+</Option>

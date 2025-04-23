@@ -1,18 +1,18 @@
 <!DOCTYPE qgis PUBLIC 'http://mrcc.com/qgis.dtd' 'SYSTEM'>
-<qgis version="3.34.12-Prizren" maxScale="0" minScale="100000000" autoRefreshMode="Disabled" autoRefreshTime="0" simplifyDrawingHints="0" simplifyMaxScale="1" hasScaleBasedVisibilityFlag="0" labelsEnabled="0" simplifyDrawingTol="1" symbologyReferenceScale="-1" simplifyLocal="1" styleCategories="AllStyleCategories" simplifyAlgorithm="0" readOnly="0">
+<qgis autoRefreshTime="0" simplifyMaxScale="1" styleCategories="AllStyleCategories" autoRefreshMode="Disabled" labelsEnabled="0" simplifyDrawingTol="1" simplifyLocal="1" version="3.34.12-Prizren" minScale="100000000" simplifyAlgorithm="0" symbologyReferenceScale="-1" hasScaleBasedVisibilityFlag="0" readOnly="0" simplifyDrawingHints="0" maxScale="0">
   <flags>
     <Identifiable>1</Identifiable>
     <Removable>1</Removable>
     <Searchable>1</Searchable>
     <Private>0</Private>
   </flags>
-  <temporal enabled="0" limitMode="0" mode="0" durationField="_uid_" startField="" startExpression="" accumulate="0" endField="" durationUnit="min" fixedDuration="0" endExpression="">
+  <temporal enabled="0" accumulate="0" endExpression="" mode="0" limitMode="0" startField="" startExpression="" endField="" durationField="_uid_" durationUnit="min" fixedDuration="0">
     <fixedRange>
       <start></start>
       <end></end>
     </fixedRange>
   </temporal>
-  <elevation extrusion="0" symbology="Line" extrusionEnabled="0" zoffset="0" respectLayerSymbol="1" zscale="1" clamping="Terrain" binding="Centroid" showMarkerSymbolInSurfacePlots="0" type="IndividualFeatures">
+  <elevation extrusionEnabled="0" respectLayerSymbol="1" zoffset="0" zscale="1" extrusion="0" symbology="Line" clamping="Terrain" type="IndividualFeatures" showMarkerSymbolInSurfacePlots="0" binding="Centroid">
     <data-defined-properties>
       <Option type="Map">
         <Option name="name" value="" type="QString"/>
@@ -21,7 +21,7 @@
       </Option>
     </data-defined-properties>
     <profileLineSymbol>
-      <symbol is_animated="0" name="" frame_rate="10" clip_to_extent="1" force_rhr="0" alpha="1" type="line">
+      <symbol name="" alpha="1" force_rhr="0" is_animated="0" type="line" clip_to_extent="1" frame_rate="10">
         <data_defined_properties>
           <Option type="Map">
             <Option name="name" value="" type="QString"/>
@@ -29,7 +29,7 @@
             <Option name="type" value="collection" type="QString"/>
           </Option>
         </data_defined_properties>
-        <layer enabled="1" id="{433aa6ba-7d1d-4276-8225-26121450f416}" class="SimpleLine" locked="0" pass="0">
+        <layer enabled="1" locked="0" pass="0" class="SimpleLine" id="{433aa6ba-7d1d-4276-8225-26121450f416}">
           <Option type="Map">
             <Option name="align_dash_pattern" value="0" type="QString"/>
             <Option name="capstyle" value="square" type="QString"/>
@@ -70,7 +70,7 @@
       </symbol>
     </profileLineSymbol>
     <profileFillSymbol>
-      <symbol is_animated="0" name="" frame_rate="10" clip_to_extent="1" force_rhr="0" alpha="1" type="fill">
+      <symbol name="" alpha="1" force_rhr="0" is_animated="0" type="fill" clip_to_extent="1" frame_rate="10">
         <data_defined_properties>
           <Option type="Map">
             <Option name="name" value="" type="QString"/>
@@ -78,7 +78,7 @@
             <Option name="type" value="collection" type="QString"/>
           </Option>
         </data_defined_properties>
-        <layer enabled="1" id="{d220d9b7-0bd8-493d-b58a-0fb64a0b5a5e}" class="SimpleFill" locked="0" pass="0">
+        <layer enabled="1" locked="0" pass="0" class="SimpleFill" id="{d220d9b7-0bd8-493d-b58a-0fb64a0b5a5e}">
           <Option type="Map">
             <Option name="border_width_map_unit_scale" value="3x:0,0,0,0,0,0" type="QString"/>
             <Option name="color" value="125,139,143,255" type="QString"/>
@@ -103,7 +103,7 @@
       </symbol>
     </profileFillSymbol>
     <profileMarkerSymbol>
-      <symbol is_animated="0" name="" frame_rate="10" clip_to_extent="1" force_rhr="0" alpha="1" type="marker">
+      <symbol name="" alpha="1" force_rhr="0" is_animated="0" type="marker" clip_to_extent="1" frame_rate="10">
         <data_defined_properties>
           <Option type="Map">
             <Option name="name" value="" type="QString"/>
@@ -111,7 +111,7 @@
             <Option name="type" value="collection" type="QString"/>
           </Option>
         </data_defined_properties>
-        <layer enabled="1" id="{297fa197-0b8e-48bf-a257-797a28bd6c1b}" class="SimpleMarker" locked="0" pass="0">
+        <layer enabled="1" locked="0" pass="0" class="SimpleMarker" id="{297fa197-0b8e-48bf-a257-797a28bd6c1b}">
           <Option type="Map">
             <Option name="angle" value="0" type="QString"/>
             <Option name="cap_style" value="square" type="QString"/>
@@ -144,19 +144,21 @@
       </symbol>
     </profileMarkerSymbol>
   </elevation>
-  <renderer-v2 enableorderby="0" symbollevels="0" referencescale="-1" type="RuleRenderer" forceraster="0">
+  <renderer-v2 enableorderby="0" forceraster="0" type="RuleRenderer" referencescale="-1" symbollevels="0">
     <rules key="{25158cf9-539d-4cb8-91fd-acfa742ca0d5}">
-      <rule filter="ELSE" key="{d2a63c1c-cf68-4830-825a-784940a9dee3}" symbol="0"/>
-      <rule filter="&quot;INTERET_PACA&quot; = 'DD'" key="{ab0a3a33-4e5a-4115-8efa-f361443936f7}" label="DD" symbol="1"/>
-      <rule filter="&quot;INTERET_PACA&quot; = 'NUL'" key="{5acf4eb0-4865-4d87-90f3-15c2bfa0d4af}" label="NUL" symbol="2"/>
-      <rule filter="&quot;INTERET_PACA&quot; = 'TRES FAIBLE'" key="{edab3145-d3a9-4612-b5bb-dbb3b445d8e3}" label="TRES FAIBLE" symbol="3"/>
-      <rule filter="&quot;INTERET_PACA&quot; = 'FAIBLE'" key="{695e846e-20f8-4676-8262-58c2f009976e}" label="FAIBLE" symbol="4"/>
-      <rule filter="&quot;INTERET_PACA&quot; = 'MODERE'" key="{0e433e80-a9f7-48fb-8ce9-c31c40153ad3}" label="MODERE" symbol="5"/>
-      <rule filter="&quot;INTERET_PACA&quot; = 'FORT'" key="{bd4d661f-2854-4ad9-8ca0-a009583e9ae3}" label="FORT" symbol="6"/>
-      <rule filter=" &quot;PROTECTION_PACA&quot;  &lt;> '-'" key="{966bf520-eb8e-4390-b6c1-a1a9772da4cb}" label="Protection" symbol="7"/>
+      <rule key="{d2a63c1c-cf68-4830-825a-784940a9dee3}" symbol="0" filter="ELSE"/>
+      <rule key="{ab0a3a33-4e5a-4115-8efa-f361443936f7}" label="DD" symbol="1" filter="&quot;INTERET_PACA&quot; = 'DD'"/>
+      <rule key="{5acf4eb0-4865-4d87-90f3-15c2bfa0d4af}" label="NUL" symbol="2" filter="&quot;INTERET_PACA&quot; = 'NUL'"/>
+      <rule key="{edab3145-d3a9-4612-b5bb-dbb3b445d8e3}" label="TRES FAIBLE" symbol="3" filter="&quot;INTERET_PACA&quot; = 'TRES FAIBLE'"/>
+      <rule key="{695e846e-20f8-4676-8262-58c2f009976e}" label="FAIBLE" symbol="4" filter="&quot;INTERET_PACA&quot; = 'FAIBLE'"/>
+      <rule key="{0e433e80-a9f7-48fb-8ce9-c31c40153ad3}" label="MODERE" symbol="5" filter="&quot;INTERET_PACA&quot; = 'MODERE'"/>
+      <rule key="{bd4d661f-2854-4ad9-8ca0-a009583e9ae3}" label="FORT" symbol="6" filter="&quot;INTERET_PACA&quot; = 'FORT'"/>
+      <rule key="{c6f53a91-5bb5-4297-96ef-7148b577590d}" label="TRES FORT" symbol="7" filter="&quot;INTERET_PACA&quot; = 'TRES FORT'"/>
+      <rule key="{1808f1e2-e5fb-45db-a454-96d0eb2ba6ee}" label="MAJEUR" symbol="8" filter="&quot;INTERET_PACA&quot; = 'MAJEUR'"/>
+      <rule key="{2b7193d3-320e-4016-ab32-a327e9bf94ba}" label="Protection" symbol="9" filter=" &quot;PROTECTION_PACA&quot;  &lt;> '-'"/>
     </rules>
     <symbols>
-      <symbol is_animated="0" name="0" frame_rate="10" clip_to_extent="1" force_rhr="0" alpha="1" type="marker">
+      <symbol name="0" alpha="1" force_rhr="0" is_animated="0" type="marker" clip_to_extent="1" frame_rate="10">
         <data_defined_properties>
           <Option type="Map">
             <Option name="name" value="" type="QString"/>
@@ -164,7 +166,7 @@
             <Option name="type" value="collection" type="QString"/>
           </Option>
         </data_defined_properties>
-        <layer enabled="1" id="{660ce7b3-db50-4b90-b002-7db74507f6d4}" class="SimpleMarker" locked="0" pass="0">
+        <layer enabled="1" locked="0" pass="0" class="SimpleMarker" id="{660ce7b3-db50-4b90-b002-7db74507f6d4}">
           <Option type="Map">
             <Option name="angle" value="0" type="QString"/>
             <Option name="cap_style" value="square" type="QString"/>
@@ -195,7 +197,7 @@
           </data_defined_properties>
         </layer>
       </symbol>
-      <symbol is_animated="0" name="1" frame_rate="10" clip_to_extent="1" force_rhr="0" alpha="1" type="marker">
+      <symbol name="1" alpha="1" force_rhr="0" is_animated="0" type="marker" clip_to_extent="1" frame_rate="10">
         <data_defined_properties>
           <Option type="Map">
             <Option name="name" value="" type="QString"/>
@@ -203,7 +205,7 @@
             <Option name="type" value="collection" type="QString"/>
           </Option>
         </data_defined_properties>
-        <layer enabled="1" id="{660ce7b3-db50-4b90-b002-7db74507f6d4}" class="SimpleMarker" locked="0" pass="0">
+        <layer enabled="1" locked="0" pass="0" class="SimpleMarker" id="{660ce7b3-db50-4b90-b002-7db74507f6d4}">
           <Option type="Map">
             <Option name="angle" value="0" type="QString"/>
             <Option name="cap_style" value="square" type="QString"/>
@@ -234,7 +236,7 @@
           </data_defined_properties>
         </layer>
       </symbol>
-      <symbol is_animated="0" name="2" frame_rate="10" clip_to_extent="1" force_rhr="0" alpha="1" type="marker">
+      <symbol name="2" alpha="1" force_rhr="0" is_animated="0" type="marker" clip_to_extent="1" frame_rate="10">
         <data_defined_properties>
           <Option type="Map">
             <Option name="name" value="" type="QString"/>
@@ -242,7 +244,7 @@
             <Option name="type" value="collection" type="QString"/>
           </Option>
         </data_defined_properties>
-        <layer enabled="1" id="{660ce7b3-db50-4b90-b002-7db74507f6d4}" class="SimpleMarker" locked="0" pass="0">
+        <layer enabled="1" locked="0" pass="0" class="SimpleMarker" id="{660ce7b3-db50-4b90-b002-7db74507f6d4}">
           <Option type="Map">
             <Option name="angle" value="0" type="QString"/>
             <Option name="cap_style" value="square" type="QString"/>
@@ -273,7 +275,7 @@
           </data_defined_properties>
         </layer>
       </symbol>
-      <symbol is_animated="0" name="3" frame_rate="10" clip_to_extent="1" force_rhr="0" alpha="1" type="marker">
+      <symbol name="3" alpha="1" force_rhr="0" is_animated="0" type="marker" clip_to_extent="1" frame_rate="10">
         <data_defined_properties>
           <Option type="Map">
             <Option name="name" value="" type="QString"/>
@@ -281,7 +283,7 @@
             <Option name="type" value="collection" type="QString"/>
           </Option>
         </data_defined_properties>
-        <layer enabled="1" id="{660ce7b3-db50-4b90-b002-7db74507f6d4}" class="SimpleMarker" locked="0" pass="0">
+        <layer enabled="1" locked="0" pass="0" class="SimpleMarker" id="{660ce7b3-db50-4b90-b002-7db74507f6d4}">
           <Option type="Map">
             <Option name="angle" value="0" type="QString"/>
             <Option name="cap_style" value="square" type="QString"/>
@@ -312,7 +314,7 @@
           </data_defined_properties>
         </layer>
       </symbol>
-      <symbol is_animated="0" name="4" frame_rate="10" clip_to_extent="1" force_rhr="0" alpha="1" type="marker">
+      <symbol name="4" alpha="1" force_rhr="0" is_animated="0" type="marker" clip_to_extent="1" frame_rate="10">
         <data_defined_properties>
           <Option type="Map">
             <Option name="name" value="" type="QString"/>
@@ -320,7 +322,7 @@
             <Option name="type" value="collection" type="QString"/>
           </Option>
         </data_defined_properties>
-        <layer enabled="1" id="{660ce7b3-db50-4b90-b002-7db74507f6d4}" class="SimpleMarker" locked="0" pass="0">
+        <layer enabled="1" locked="0" pass="0" class="SimpleMarker" id="{660ce7b3-db50-4b90-b002-7db74507f6d4}">
           <Option type="Map">
             <Option name="angle" value="0" type="QString"/>
             <Option name="cap_style" value="square" type="QString"/>
@@ -351,7 +353,7 @@
           </data_defined_properties>
         </layer>
       </symbol>
-      <symbol is_animated="0" name="5" frame_rate="10" clip_to_extent="1" force_rhr="0" alpha="1" type="marker">
+      <symbol name="5" alpha="1" force_rhr="0" is_animated="0" type="marker" clip_to_extent="1" frame_rate="10">
         <data_defined_properties>
           <Option type="Map">
             <Option name="name" value="" type="QString"/>
@@ -359,7 +361,7 @@
             <Option name="type" value="collection" type="QString"/>
           </Option>
         </data_defined_properties>
-        <layer enabled="1" id="{660ce7b3-db50-4b90-b002-7db74507f6d4}" class="SimpleMarker" locked="0" pass="0">
+        <layer enabled="1" locked="0" pass="0" class="SimpleMarker" id="{660ce7b3-db50-4b90-b002-7db74507f6d4}">
           <Option type="Map">
             <Option name="angle" value="0" type="QString"/>
             <Option name="cap_style" value="square" type="QString"/>
@@ -390,7 +392,7 @@
           </data_defined_properties>
         </layer>
       </symbol>
-      <symbol is_animated="0" name="6" frame_rate="10" clip_to_extent="1" force_rhr="0" alpha="1" type="marker">
+      <symbol name="6" alpha="1" force_rhr="0" is_animated="0" type="marker" clip_to_extent="1" frame_rate="10">
         <data_defined_properties>
           <Option type="Map">
             <Option name="name" value="" type="QString"/>
@@ -398,7 +400,7 @@
             <Option name="type" value="collection" type="QString"/>
           </Option>
         </data_defined_properties>
-        <layer enabled="1" id="{660ce7b3-db50-4b90-b002-7db74507f6d4}" class="SimpleMarker" locked="0" pass="0">
+        <layer enabled="1" locked="0" pass="0" class="SimpleMarker" id="{660ce7b3-db50-4b90-b002-7db74507f6d4}">
           <Option type="Map">
             <Option name="angle" value="0" type="QString"/>
             <Option name="cap_style" value="square" type="QString"/>
@@ -429,7 +431,7 @@
           </data_defined_properties>
         </layer>
       </symbol>
-      <symbol is_animated="0" name="7" frame_rate="10" clip_to_extent="1" force_rhr="0" alpha="1" type="marker">
+      <symbol name="7" alpha="1" force_rhr="0" is_animated="0" type="marker" clip_to_extent="1" frame_rate="10">
         <data_defined_properties>
           <Option type="Map">
             <Option name="name" value="" type="QString"/>
@@ -437,7 +439,85 @@
             <Option name="type" value="collection" type="QString"/>
           </Option>
         </data_defined_properties>
-        <layer enabled="1" id="{ca0e82aa-af40-4a6e-88a7-62963d05f2a8}" class="SimpleMarker" locked="0" pass="0">
+        <layer enabled="1" locked="0" pass="0" class="SimpleMarker" id="{660ce7b3-db50-4b90-b002-7db74507f6d4}">
+          <Option type="Map">
+            <Option name="angle" value="0" type="QString"/>
+            <Option name="cap_style" value="square" type="QString"/>
+            <Option name="color" value="102,20,0,255" type="QString"/>
+            <Option name="horizontal_anchor_point" value="1" type="QString"/>
+            <Option name="joinstyle" value="bevel" type="QString"/>
+            <Option name="name" value="circle" type="QString"/>
+            <Option name="offset" value="0,0" type="QString"/>
+            <Option name="offset_map_unit_scale" value="3x:0,0,0,0,0,0" type="QString"/>
+            <Option name="offset_unit" value="MM" type="QString"/>
+            <Option name="outline_color" value="35,35,35,255" type="QString"/>
+            <Option name="outline_style" value="solid" type="QString"/>
+            <Option name="outline_width" value="0" type="QString"/>
+            <Option name="outline_width_map_unit_scale" value="3x:0,0,0,0,0,0" type="QString"/>
+            <Option name="outline_width_unit" value="MM" type="QString"/>
+            <Option name="scale_method" value="diameter" type="QString"/>
+            <Option name="size" value="3" type="QString"/>
+            <Option name="size_map_unit_scale" value="3x:0,0,0,0,0,0" type="QString"/>
+            <Option name="size_unit" value="MM" type="QString"/>
+            <Option name="vertical_anchor_point" value="1" type="QString"/>
+          </Option>
+          <data_defined_properties>
+            <Option type="Map">
+              <Option name="name" value="" type="QString"/>
+              <Option name="properties"/>
+              <Option name="type" value="collection" type="QString"/>
+            </Option>
+          </data_defined_properties>
+        </layer>
+      </symbol>
+      <symbol name="8" alpha="1" force_rhr="0" is_animated="0" type="marker" clip_to_extent="1" frame_rate="10">
+        <data_defined_properties>
+          <Option type="Map">
+            <Option name="name" value="" type="QString"/>
+            <Option name="properties"/>
+            <Option name="type" value="collection" type="QString"/>
+          </Option>
+        </data_defined_properties>
+        <layer enabled="1" locked="0" pass="0" class="SimpleMarker" id="{660ce7b3-db50-4b90-b002-7db74507f6d4}">
+          <Option type="Map">
+            <Option name="angle" value="0" type="QString"/>
+            <Option name="cap_style" value="square" type="QString"/>
+            <Option name="color" value="94,1,140,255" type="QString"/>
+            <Option name="horizontal_anchor_point" value="1" type="QString"/>
+            <Option name="joinstyle" value="bevel" type="QString"/>
+            <Option name="name" value="circle" type="QString"/>
+            <Option name="offset" value="0,0" type="QString"/>
+            <Option name="offset_map_unit_scale" value="3x:0,0,0,0,0,0" type="QString"/>
+            <Option name="offset_unit" value="MM" type="QString"/>
+            <Option name="outline_color" value="35,35,35,255" type="QString"/>
+            <Option name="outline_style" value="solid" type="QString"/>
+            <Option name="outline_width" value="0" type="QString"/>
+            <Option name="outline_width_map_unit_scale" value="3x:0,0,0,0,0,0" type="QString"/>
+            <Option name="outline_width_unit" value="MM" type="QString"/>
+            <Option name="scale_method" value="diameter" type="QString"/>
+            <Option name="size" value="3" type="QString"/>
+            <Option name="size_map_unit_scale" value="3x:0,0,0,0,0,0" type="QString"/>
+            <Option name="size_unit" value="MM" type="QString"/>
+            <Option name="vertical_anchor_point" value="1" type="QString"/>
+          </Option>
+          <data_defined_properties>
+            <Option type="Map">
+              <Option name="name" value="" type="QString"/>
+              <Option name="properties"/>
+              <Option name="type" value="collection" type="QString"/>
+            </Option>
+          </data_defined_properties>
+        </layer>
+      </symbol>
+      <symbol name="9" alpha="1" force_rhr="0" is_animated="0" type="marker" clip_to_extent="1" frame_rate="10">
+        <data_defined_properties>
+          <Option type="Map">
+            <Option name="name" value="" type="QString"/>
+            <Option name="properties"/>
+            <Option name="type" value="collection" type="QString"/>
+          </Option>
+        </data_defined_properties>
+        <layer enabled="1" locked="0" pass="0" class="SimpleMarker" id="{ca0e82aa-af40-4a6e-88a7-62963d05f2a8}">
           <Option type="Map">
             <Option name="angle" value="0" type="QString"/>
             <Option name="cap_style" value="square" type="QString"/>
@@ -448,13 +528,13 @@
             <Option name="offset" value="0,0" type="QString"/>
             <Option name="offset_map_unit_scale" value="3x:0,0,0,0,0,0" type="QString"/>
             <Option name="offset_unit" value="MM" type="QString"/>
-            <Option name="outline_color" value="35,35,35,255" type="QString"/>
+            <Option name="outline_color" value="255,255,255,255" type="QString"/>
             <Option name="outline_style" value="solid" type="QString"/>
             <Option name="outline_width" value="0" type="QString"/>
             <Option name="outline_width_map_unit_scale" value="3x:0,0,0,0,0,0" type="QString"/>
             <Option name="outline_width_unit" value="MM" type="QString"/>
             <Option name="scale_method" value="diameter" type="QString"/>
-            <Option name="size" value="1.4" type="QString"/>
+            <Option name="size" value="1.6" type="QString"/>
             <Option name="size_map_unit_scale" value="3x:0,0,0,0,0,0" type="QString"/>
             <Option name="size_unit" value="MM" type="QString"/>
             <Option name="vertical_anchor_point" value="1" type="QString"/>
@@ -473,7 +553,7 @@
   <selection mode="Default">
     <selectionColor invalid="1"/>
     <selectionSymbol>
-      <symbol is_animated="0" name="" frame_rate="10" clip_to_extent="1" force_rhr="0" alpha="1" type="marker">
+      <symbol name="" alpha="1" force_rhr="0" is_animated="0" type="marker" clip_to_extent="1" frame_rate="10">
         <data_defined_properties>
           <Option type="Map">
             <Option name="name" value="" type="QString"/>
@@ -481,7 +561,7 @@
             <Option name="type" value="collection" type="QString"/>
           </Option>
         </data_defined_properties>
-        <layer enabled="1" id="{76e08663-616a-465b-b6db-e9b218eb39d6}" class="SimpleMarker" locked="0" pass="0">
+        <layer enabled="1" locked="0" pass="0" class="SimpleMarker" id="{76e08663-616a-465b-b6db-e9b218eb39d6}">
           <Option type="Map">
             <Option name="angle" value="0" type="QString"/>
             <Option name="cap_style" value="square" type="QString"/>
@@ -539,11 +619,11 @@
   <featureBlendMode>0</featureBlendMode>
   <layerOpacity>1</layerOpacity>
   <SingleCategoryDiagramRenderer diagramType="Histogram" attributeLegend="1">
-    <DiagramCategory maxScaleDenominator="1e+08" lineSizeScale="3x:0,0,0,0,0,0" penAlpha="255" opacity="1" sizeScale="3x:0,0,0,0,0,0" barWidth="5" backgroundAlpha="255" minimumSize="0" sizeType="MM" direction="0" minScaleDenominator="0" enabled="0" penWidth="0" diagramOrientation="Up" spacingUnit="MM" width="15" scaleBasedVisibility="0" rotationOffset="270" backgroundColor="#ffffff" height="15" penColor="#000000" spacingUnitScale="3x:0,0,0,0,0,0" labelPlacementMethod="XHeight" scaleDependency="Area" spacing="5" showAxis="1" lineSizeType="MM">
-      <fontProperties description="MS Shell Dlg 2,7.8,-1,5,50,0,0,0,0,0" style="" italic="0" underline="0" bold="0" strikethrough="0"/>
-      <attribute colorOpacity="1" color="#000000" field="" label=""/>
+    <DiagramCategory penColor="#000000" scaleBasedVisibility="0" maxScaleDenominator="1e+08" barWidth="5" labelPlacementMethod="XHeight" enabled="0" spacing="5" spacingUnitScale="3x:0,0,0,0,0,0" opacity="1" rotationOffset="270" width="15" sizeType="MM" penWidth="0" backgroundColor="#ffffff" height="15" lineSizeScale="3x:0,0,0,0,0,0" scaleDependency="Area" backgroundAlpha="255" lineSizeType="MM" showAxis="1" penAlpha="255" sizeScale="3x:0,0,0,0,0,0" diagramOrientation="Up" spacingUnit="MM" minimumSize="0" direction="0" minScaleDenominator="0">
+      <fontProperties bold="0" underline="0" strikethrough="0" description="MS Shell Dlg 2,7.8,-1,5,50,0,0,0,0,0" style="" italic="0"/>
+      <attribute field="" label="" color="#000000" colorOpacity="1"/>
       <axisSymbol>
-        <symbol is_animated="0" name="" frame_rate="10" clip_to_extent="1" force_rhr="0" alpha="1" type="line">
+        <symbol name="" alpha="1" force_rhr="0" is_animated="0" type="line" clip_to_extent="1" frame_rate="10">
           <data_defined_properties>
             <Option type="Map">
               <Option name="name" value="" type="QString"/>
@@ -551,7 +631,7 @@
               <Option name="type" value="collection" type="QString"/>
             </Option>
           </data_defined_properties>
-          <layer enabled="1" id="{52cb952f-aaf1-4be7-87b8-37f2600d11d8}" class="SimpleLine" locked="0" pass="0">
+          <layer enabled="1" locked="0" pass="0" class="SimpleLine" id="{52cb952f-aaf1-4be7-87b8-37f2600d11d8}">
             <Option type="Map">
               <Option name="align_dash_pattern" value="0" type="QString"/>
               <Option name="capstyle" value="square" type="QString"/>
@@ -593,7 +673,7 @@
       </axisSymbol>
     </DiagramCategory>
   </SingleCategoryDiagramRenderer>
-  <DiagramLayerSettings linePlacementFlags="18" showAll="1" obstacle="0" dist="0" zIndex="0" priority="0" placement="0">
+  <DiagramLayerSettings zIndex="0" dist="0" placement="0" obstacle="0" showAll="1" linePlacementFlags="18" priority="0">
     <properties>
       <Option type="Map">
         <Option name="name" value="" type="QString"/>
@@ -606,52 +686,52 @@
     <activeChecks/>
     <checkConfiguration/>
   </geometryOptions>
-  <legend showLabelLegend="0" type="default-vector"/>
+  <legend type="default-vector" showLabelLegend="0"/>
   <referencedLayers/>
   <fieldConfiguration>
-    <field configurationFlags="NoFlag" name="_uid_">
+    <field name="_uid_" configurationFlags="NoFlag">
       <editWidget type="TextEdit">
         <config>
           <Option/>
         </config>
       </editWidget>
     </field>
-    <field configurationFlags="NoFlag" name="cd_ref">
+    <field name="cd_ref" configurationFlags="NoFlag">
       <editWidget type="TextEdit">
         <config>
           <Option/>
         </config>
       </editWidget>
     </field>
-    <field configurationFlags="NoFlag" name="date_debut">
+    <field name="date_debut" configurationFlags="NoFlag">
       <editWidget type="TextEdit">
         <config>
           <Option/>
         </config>
       </editWidget>
     </field>
-    <field configurationFlags="NoFlag" name="nom_valide">
+    <field name="nom_valide" configurationFlags="NoFlag">
       <editWidget type="TextEdit">
         <config>
           <Option/>
         </config>
       </editWidget>
     </field>
-    <field configurationFlags="NoFlag" name="nom_vernac">
+    <field name="nom_vernac" configurationFlags="NoFlag">
       <editWidget type="TextEdit">
         <config>
           <Option/>
         </config>
       </editWidget>
     </field>
-    <field configurationFlags="NoFlag" name="INTERET_PACA">
+    <field name="INTERET_PACA" configurationFlags="NoFlag">
       <editWidget type="TextEdit">
         <config>
           <Option/>
         </config>
       </editWidget>
     </field>
-    <field configurationFlags="NoFlag" name="PROTECTION_PACA">
+    <field name="PROTECTION_PACA" configurationFlags="NoFlag">
       <editWidget type="TextEdit">
         <config>
           <Option/>
@@ -660,13 +740,13 @@
     </field>
   </fieldConfiguration>
   <aliases>
-    <alias index="0" name="" field="_uid_"/>
-    <alias index="1" name="" field="cd_ref"/>
-    <alias index="2" name="" field="date_debut"/>
-    <alias index="3" name="" field="nom_valide"/>
-    <alias index="4" name="" field="nom_vernac"/>
-    <alias index="5" name="" field="INTERET_PACA"/>
-    <alias index="6" name="" field="PROTECTION_PACA"/>
+    <alias name="" field="_uid_" index="0"/>
+    <alias name="" field="cd_ref" index="1"/>
+    <alias name="" field="date_debut" index="2"/>
+    <alias name="" field="nom_valide" index="3"/>
+    <alias name="" field="nom_vernac" index="4"/>
+    <alias name="" field="INTERET_PACA" index="5"/>
+    <alias name="" field="PROTECTION_PACA" index="6"/>
   </aliases>
   <splitPolicies>
     <policy field="_uid_" policy="Duplicate"/>
@@ -678,22 +758,22 @@
     <policy field="PROTECTION_PACA" policy="Duplicate"/>
   </splitPolicies>
   <defaults>
-    <default field="_uid_" applyOnUpdate="0" expression=""/>
-    <default field="cd_ref" applyOnUpdate="0" expression=""/>
-    <default field="date_debut" applyOnUpdate="0" expression=""/>
-    <default field="nom_valide" applyOnUpdate="0" expression=""/>
-    <default field="nom_vernac" applyOnUpdate="0" expression=""/>
-    <default field="INTERET_PACA" applyOnUpdate="0" expression=""/>
-    <default field="PROTECTION_PACA" applyOnUpdate="0" expression=""/>
+    <default applyOnUpdate="0" field="_uid_" expression=""/>
+    <default applyOnUpdate="0" field="cd_ref" expression=""/>
+    <default applyOnUpdate="0" field="date_debut" expression=""/>
+    <default applyOnUpdate="0" field="nom_valide" expression=""/>
+    <default applyOnUpdate="0" field="nom_vernac" expression=""/>
+    <default applyOnUpdate="0" field="INTERET_PACA" expression=""/>
+    <default applyOnUpdate="0" field="PROTECTION_PACA" expression=""/>
   </defaults>
   <constraints>
-    <constraint unique_strength="1" field="_uid_" constraints="3" notnull_strength="1" exp_strength="0"/>
-    <constraint unique_strength="0" field="cd_ref" constraints="0" notnull_strength="0" exp_strength="0"/>
-    <constraint unique_strength="0" field="date_debut" constraints="0" notnull_strength="0" exp_strength="0"/>
-    <constraint unique_strength="0" field="nom_valide" constraints="0" notnull_strength="0" exp_strength="0"/>
-    <constraint unique_strength="0" field="nom_vernac" constraints="0" notnull_strength="0" exp_strength="0"/>
-    <constraint unique_strength="0" field="INTERET_PACA" constraints="0" notnull_strength="0" exp_strength="0"/>
-    <constraint unique_strength="0" field="PROTECTION_PACA" constraints="0" notnull_strength="0" exp_strength="0"/>
+    <constraint notnull_strength="1" unique_strength="1" field="_uid_" exp_strength="0" constraints="3"/>
+    <constraint notnull_strength="0" unique_strength="0" field="cd_ref" exp_strength="0" constraints="0"/>
+    <constraint notnull_strength="0" unique_strength="0" field="date_debut" exp_strength="0" constraints="0"/>
+    <constraint notnull_strength="0" unique_strength="0" field="nom_valide" exp_strength="0" constraints="0"/>
+    <constraint notnull_strength="0" unique_strength="0" field="nom_vernac" exp_strength="0" constraints="0"/>
+    <constraint notnull_strength="0" unique_strength="0" field="INTERET_PACA" exp_strength="0" constraints="0"/>
+    <constraint notnull_strength="0" unique_strength="0" field="PROTECTION_PACA" exp_strength="0" constraints="0"/>
   </constraints>
   <constraintExpressions>
     <constraint field="_uid_" desc="" exp=""/>
@@ -706,18 +786,18 @@
   </constraintExpressions>
   <expressionfields/>
   <attributeactions>
-    <defaultAction key="Canvas" value="{00000000-0000-0000-0000-000000000000}"/>
+    <defaultAction value="{00000000-0000-0000-0000-000000000000}" key="Canvas"/>
   </attributeactions>
   <attributetableconfig sortOrder="0" actionWidgetStyle="dropDown" sortExpression="&quot;nom_valide&quot;">
     <columns>
-      <column name="_uid_" hidden="0" width="-1" type="field"/>
-      <column name="cd_ref" hidden="0" width="-1" type="field"/>
-      <column name="nom_valide" hidden="0" width="287" type="field"/>
-      <column name="nom_vernac" hidden="0" width="-1" type="field"/>
-      <column name="date_debut" hidden="0" width="-1" type="field"/>
-      <column name="PROTECTION_PACA" hidden="0" width="328" type="field"/>
-      <column name="INTERET_PACA" hidden="0" width="-1" type="field"/>
-      <column hidden="1" width="-1" type="actions"/>
+      <column name="_uid_" width="-1" hidden="0" type="field"/>
+      <column name="cd_ref" width="-1" hidden="0" type="field"/>
+      <column name="nom_valide" width="287" hidden="0" type="field"/>
+      <column name="nom_vernac" width="-1" hidden="0" type="field"/>
+      <column name="date_debut" width="-1" hidden="0" type="field"/>
+      <column name="PROTECTION_PACA" width="328" hidden="0" type="field"/>
+      <column name="INTERET_PACA" width="-1" hidden="0" type="field"/>
+      <column width="-1" hidden="1" type="actions"/>
     </columns>
   </attributetableconfig>
   <conditionalstyles>
@@ -829,164 +909,164 @@ def my_form_open(dialog, layer, feature):
     <field name="y_centroid" editable="1"/>
   </editable>
   <labelOnTop>
-    <field labelOnTop="0" name="Barcelonne"/>
-    <field labelOnTop="0" name="Berne"/>
-    <field labelOnTop="0" name="DD_RATE"/>
-    <field labelOnTop="0" name="DH"/>
-    <field labelOnTop="0" name="ENJEU_CBN"/>
-    <field labelOnTop="0" name="EVEE"/>
-    <field labelOnTop="0" name="Europe"/>
-    <field labelOnTop="0" name="FAMILLE"/>
-    <field labelOnTop="0" name="INDIGENAT"/>
-    <field labelOnTop="0" name="INTERET_PACA"/>
-    <field labelOnTop="0" name="LRN"/>
-    <field labelOnTop="0" name="LRR"/>
-    <field labelOnTop="0" name="Mondiale"/>
-    <field labelOnTop="0" name="NOM_VALIDE"/>
-    <field labelOnTop="0" name="NOM_VERN"/>
-    <field labelOnTop="0" name="PATH_IMG"/>
-    <field labelOnTop="0" name="PD04"/>
-    <field labelOnTop="0" name="PD05"/>
-    <field labelOnTop="0" name="PD06"/>
-    <field labelOnTop="0" name="PD83"/>
-    <field labelOnTop="0" name="PD84"/>
-    <field labelOnTop="0" name="PN"/>
-    <field labelOnTop="0" name="PR"/>
-    <field labelOnTop="0" name="PROTECTION_PACA"/>
-    <field labelOnTop="0" name="PROTECTION_PACA_1"/>
-    <field labelOnTop="0" name="PR_Corr"/>
-    <field labelOnTop="0" name="PointEEE"/>
-    <field labelOnTop="0" name="PointENJEU_CBN"/>
-    <field labelOnTop="0" name="PointINDIGENAT"/>
-    <field labelOnTop="0" name="PointLRN"/>
-    <field labelOnTop="0" name="PointLRR"/>
-    <field labelOnTop="0" name="PointZNIEFF"/>
-    <field labelOnTop="0" name="SOUS_FAMILLE"/>
-    <field labelOnTop="0" name="TEXTE_LEGEND_IMG"/>
-    <field labelOnTop="0" name="TRIGRAMME"/>
-    <field labelOnTop="0" name="TotalPoint"/>
-    <field labelOnTop="0" name="ZNIEFF"/>
-    <field labelOnTop="0" name="_uid_"/>
-    <field labelOnTop="0" name="alti_min"/>
-    <field labelOnTop="0" name="cd_nom"/>
-    <field labelOnTop="0" name="cd_nom (2)"/>
-    <field labelOnTop="0" name="cd_ref"/>
-    <field labelOnTop="0" name="cd_ref (2)"/>
-    <field labelOnTop="0" name="classe"/>
-    <field labelOnTop="0" name="communes"/>
-    <field labelOnTop="0" name="comporteme"/>
-    <field labelOnTop="0" name="confidenti"/>
-    <field labelOnTop="0" name="date_debut"/>
-    <field labelOnTop="0" name="date_fin"/>
-    <field labelOnTop="0" name="ecologie"/>
-    <field labelOnTop="0" name="famille"/>
-    <field labelOnTop="0" name="floraison"/>
-    <field labelOnTop="0" name="fournisseu"/>
-    <field labelOnTop="0" name="geojson_43"/>
-    <field labelOnTop="0" name="id"/>
-    <field labelOnTop="0" name="id (2)"/>
-    <field labelOnTop="0" name="indicatrice_ZH"/>
-    <field labelOnTop="0" name="jdd_nom"/>
-    <field labelOnTop="0" name="jdd_uuid"/>
-    <field labelOnTop="0" name="nom_valide"/>
-    <field labelOnTop="0" name="nom_vernac"/>
-    <field labelOnTop="0" name="nombre_max"/>
-    <field labelOnTop="0" name="nombre_min"/>
-    <field labelOnTop="0" name="observateu"/>
-    <field labelOnTop="0" name="ordre"/>
-    <field labelOnTop="0" name="precision_"/>
-    <field labelOnTop="0" name="sensibilit"/>
-    <field labelOnTop="0" name="sexe"/>
-    <field labelOnTop="0" name="stade_vie"/>
-    <field labelOnTop="0" name="statut_bio"/>
-    <field labelOnTop="0" name="syntaxon"/>
-    <field labelOnTop="0" name="technique_"/>
-    <field labelOnTop="0" name="type_preci"/>
-    <field labelOnTop="0" name="type_sourc"/>
-    <field labelOnTop="0" name="uuid_per_1"/>
-    <field labelOnTop="0" name="uuid_perm_"/>
-    <field labelOnTop="0" name="x_centroid"/>
-    <field labelOnTop="0" name="y_centroid"/>
+    <field name="Barcelonne" labelOnTop="0"/>
+    <field name="Berne" labelOnTop="0"/>
+    <field name="DD_RATE" labelOnTop="0"/>
+    <field name="DH" labelOnTop="0"/>
+    <field name="ENJEU_CBN" labelOnTop="0"/>
+    <field name="EVEE" labelOnTop="0"/>
+    <field name="Europe" labelOnTop="0"/>
+    <field name="FAMILLE" labelOnTop="0"/>
+    <field name="INDIGENAT" labelOnTop="0"/>
+    <field name="INTERET_PACA" labelOnTop="0"/>
+    <field name="LRN" labelOnTop="0"/>
+    <field name="LRR" labelOnTop="0"/>
+    <field name="Mondiale" labelOnTop="0"/>
+    <field name="NOM_VALIDE" labelOnTop="0"/>
+    <field name="NOM_VERN" labelOnTop="0"/>
+    <field name="PATH_IMG" labelOnTop="0"/>
+    <field name="PD04" labelOnTop="0"/>
+    <field name="PD05" labelOnTop="0"/>
+    <field name="PD06" labelOnTop="0"/>
+    <field name="PD83" labelOnTop="0"/>
+    <field name="PD84" labelOnTop="0"/>
+    <field name="PN" labelOnTop="0"/>
+    <field name="PR" labelOnTop="0"/>
+    <field name="PROTECTION_PACA" labelOnTop="0"/>
+    <field name="PROTECTION_PACA_1" labelOnTop="0"/>
+    <field name="PR_Corr" labelOnTop="0"/>
+    <field name="PointEEE" labelOnTop="0"/>
+    <field name="PointENJEU_CBN" labelOnTop="0"/>
+    <field name="PointINDIGENAT" labelOnTop="0"/>
+    <field name="PointLRN" labelOnTop="0"/>
+    <field name="PointLRR" labelOnTop="0"/>
+    <field name="PointZNIEFF" labelOnTop="0"/>
+    <field name="SOUS_FAMILLE" labelOnTop="0"/>
+    <field name="TEXTE_LEGEND_IMG" labelOnTop="0"/>
+    <field name="TRIGRAMME" labelOnTop="0"/>
+    <field name="TotalPoint" labelOnTop="0"/>
+    <field name="ZNIEFF" labelOnTop="0"/>
+    <field name="_uid_" labelOnTop="0"/>
+    <field name="alti_min" labelOnTop="0"/>
+    <field name="cd_nom" labelOnTop="0"/>
+    <field name="cd_nom (2)" labelOnTop="0"/>
+    <field name="cd_ref" labelOnTop="0"/>
+    <field name="cd_ref (2)" labelOnTop="0"/>
+    <field name="classe" labelOnTop="0"/>
+    <field name="communes" labelOnTop="0"/>
+    <field name="comporteme" labelOnTop="0"/>
+    <field name="confidenti" labelOnTop="0"/>
+    <field name="date_debut" labelOnTop="0"/>
+    <field name="date_fin" labelOnTop="0"/>
+    <field name="ecologie" labelOnTop="0"/>
+    <field name="famille" labelOnTop="0"/>
+    <field name="floraison" labelOnTop="0"/>
+    <field name="fournisseu" labelOnTop="0"/>
+    <field name="geojson_43" labelOnTop="0"/>
+    <field name="id" labelOnTop="0"/>
+    <field name="id (2)" labelOnTop="0"/>
+    <field name="indicatrice_ZH" labelOnTop="0"/>
+    <field name="jdd_nom" labelOnTop="0"/>
+    <field name="jdd_uuid" labelOnTop="0"/>
+    <field name="nom_valide" labelOnTop="0"/>
+    <field name="nom_vernac" labelOnTop="0"/>
+    <field name="nombre_max" labelOnTop="0"/>
+    <field name="nombre_min" labelOnTop="0"/>
+    <field name="observateu" labelOnTop="0"/>
+    <field name="ordre" labelOnTop="0"/>
+    <field name="precision_" labelOnTop="0"/>
+    <field name="sensibilit" labelOnTop="0"/>
+    <field name="sexe" labelOnTop="0"/>
+    <field name="stade_vie" labelOnTop="0"/>
+    <field name="statut_bio" labelOnTop="0"/>
+    <field name="syntaxon" labelOnTop="0"/>
+    <field name="technique_" labelOnTop="0"/>
+    <field name="type_preci" labelOnTop="0"/>
+    <field name="type_sourc" labelOnTop="0"/>
+    <field name="uuid_per_1" labelOnTop="0"/>
+    <field name="uuid_perm_" labelOnTop="0"/>
+    <field name="x_centroid" labelOnTop="0"/>
+    <field name="y_centroid" labelOnTop="0"/>
   </labelOnTop>
   <reuseLastValue>
-    <field reuseLastValue="0" name="Barcelonne"/>
-    <field reuseLastValue="0" name="Berne"/>
-    <field reuseLastValue="0" name="DD_RATE"/>
-    <field reuseLastValue="0" name="DH"/>
-    <field reuseLastValue="0" name="ENJEU_CBN"/>
-    <field reuseLastValue="0" name="EVEE"/>
-    <field reuseLastValue="0" name="Europe"/>
-    <field reuseLastValue="0" name="FAMILLE"/>
-    <field reuseLastValue="0" name="INDIGENAT"/>
-    <field reuseLastValue="0" name="INTERET_PACA"/>
-    <field reuseLastValue="0" name="LRN"/>
-    <field reuseLastValue="0" name="LRR"/>
-    <field reuseLastValue="0" name="Mondiale"/>
-    <field reuseLastValue="0" name="NOM_VALIDE"/>
-    <field reuseLastValue="0" name="NOM_VERN"/>
-    <field reuseLastValue="0" name="PATH_IMG"/>
-    <field reuseLastValue="0" name="PD04"/>
-    <field reuseLastValue="0" name="PD05"/>
-    <field reuseLastValue="0" name="PD06"/>
-    <field reuseLastValue="0" name="PD83"/>
-    <field reuseLastValue="0" name="PD84"/>
-    <field reuseLastValue="0" name="PN"/>
-    <field reuseLastValue="0" name="PR"/>
-    <field reuseLastValue="0" name="PROTECTION_PACA"/>
-    <field reuseLastValue="0" name="PROTECTION_PACA_1"/>
-    <field reuseLastValue="0" name="PR_Corr"/>
-    <field reuseLastValue="0" name="PointEEE"/>
-    <field reuseLastValue="0" name="PointENJEU_CBN"/>
-    <field reuseLastValue="0" name="PointINDIGENAT"/>
-    <field reuseLastValue="0" name="PointLRN"/>
-    <field reuseLastValue="0" name="PointLRR"/>
-    <field reuseLastValue="0" name="PointZNIEFF"/>
-    <field reuseLastValue="0" name="SOUS_FAMILLE"/>
-    <field reuseLastValue="0" name="TEXTE_LEGEND_IMG"/>
-    <field reuseLastValue="0" name="TRIGRAMME"/>
-    <field reuseLastValue="0" name="TotalPoint"/>
-    <field reuseLastValue="0" name="ZNIEFF"/>
-    <field reuseLastValue="0" name="_uid_"/>
-    <field reuseLastValue="0" name="alti_min"/>
-    <field reuseLastValue="0" name="cd_nom"/>
-    <field reuseLastValue="0" name="cd_nom (2)"/>
-    <field reuseLastValue="0" name="cd_ref"/>
-    <field reuseLastValue="0" name="cd_ref (2)"/>
-    <field reuseLastValue="0" name="classe"/>
-    <field reuseLastValue="0" name="communes"/>
-    <field reuseLastValue="0" name="comporteme"/>
-    <field reuseLastValue="0" name="confidenti"/>
-    <field reuseLastValue="0" name="date_debut"/>
-    <field reuseLastValue="0" name="date_fin"/>
-    <field reuseLastValue="0" name="ecologie"/>
-    <field reuseLastValue="0" name="famille"/>
-    <field reuseLastValue="0" name="floraison"/>
-    <field reuseLastValue="0" name="fournisseu"/>
-    <field reuseLastValue="0" name="geojson_43"/>
-    <field reuseLastValue="0" name="id"/>
-    <field reuseLastValue="0" name="id (2)"/>
-    <field reuseLastValue="0" name="indicatrice_ZH"/>
-    <field reuseLastValue="0" name="jdd_nom"/>
-    <field reuseLastValue="0" name="jdd_uuid"/>
-    <field reuseLastValue="0" name="nom_valide"/>
-    <field reuseLastValue="0" name="nom_vernac"/>
-    <field reuseLastValue="0" name="nombre_max"/>
-    <field reuseLastValue="0" name="nombre_min"/>
-    <field reuseLastValue="0" name="observateu"/>
-    <field reuseLastValue="0" name="ordre"/>
-    <field reuseLastValue="0" name="precision_"/>
-    <field reuseLastValue="0" name="sensibilit"/>
-    <field reuseLastValue="0" name="sexe"/>
-    <field reuseLastValue="0" name="stade_vie"/>
-    <field reuseLastValue="0" name="statut_bio"/>
-    <field reuseLastValue="0" name="syntaxon"/>
-    <field reuseLastValue="0" name="technique_"/>
-    <field reuseLastValue="0" name="type_preci"/>
-    <field reuseLastValue="0" name="type_sourc"/>
-    <field reuseLastValue="0" name="uuid_per_1"/>
-    <field reuseLastValue="0" name="uuid_perm_"/>
-    <field reuseLastValue="0" name="x_centroid"/>
-    <field reuseLastValue="0" name="y_centroid"/>
+    <field name="Barcelonne" reuseLastValue="0"/>
+    <field name="Berne" reuseLastValue="0"/>
+    <field name="DD_RATE" reuseLastValue="0"/>
+    <field name="DH" reuseLastValue="0"/>
+    <field name="ENJEU_CBN" reuseLastValue="0"/>
+    <field name="EVEE" reuseLastValue="0"/>
+    <field name="Europe" reuseLastValue="0"/>
+    <field name="FAMILLE" reuseLastValue="0"/>
+    <field name="INDIGENAT" reuseLastValue="0"/>
+    <field name="INTERET_PACA" reuseLastValue="0"/>
+    <field name="LRN" reuseLastValue="0"/>
+    <field name="LRR" reuseLastValue="0"/>
+    <field name="Mondiale" reuseLastValue="0"/>
+    <field name="NOM_VALIDE" reuseLastValue="0"/>
+    <field name="NOM_VERN" reuseLastValue="0"/>
+    <field name="PATH_IMG" reuseLastValue="0"/>
+    <field name="PD04" reuseLastValue="0"/>
+    <field name="PD05" reuseLastValue="0"/>
+    <field name="PD06" reuseLastValue="0"/>
+    <field name="PD83" reuseLastValue="0"/>
+    <field name="PD84" reuseLastValue="0"/>
+    <field name="PN" reuseLastValue="0"/>
+    <field name="PR" reuseLastValue="0"/>
+    <field name="PROTECTION_PACA" reuseLastValue="0"/>
+    <field name="PROTECTION_PACA_1" reuseLastValue="0"/>
+    <field name="PR_Corr" reuseLastValue="0"/>
+    <field name="PointEEE" reuseLastValue="0"/>
+    <field name="PointENJEU_CBN" reuseLastValue="0"/>
+    <field name="PointINDIGENAT" reuseLastValue="0"/>
+    <field name="PointLRN" reuseLastValue="0"/>
+    <field name="PointLRR" reuseLastValue="0"/>
+    <field name="PointZNIEFF" reuseLastValue="0"/>
+    <field name="SOUS_FAMILLE" reuseLastValue="0"/>
+    <field name="TEXTE_LEGEND_IMG" reuseLastValue="0"/>
+    <field name="TRIGRAMME" reuseLastValue="0"/>
+    <field name="TotalPoint" reuseLastValue="0"/>
+    <field name="ZNIEFF" reuseLastValue="0"/>
+    <field name="_uid_" reuseLastValue="0"/>
+    <field name="alti_min" reuseLastValue="0"/>
+    <field name="cd_nom" reuseLastValue="0"/>
+    <field name="cd_nom (2)" reuseLastValue="0"/>
+    <field name="cd_ref" reuseLastValue="0"/>
+    <field name="cd_ref (2)" reuseLastValue="0"/>
+    <field name="classe" reuseLastValue="0"/>
+    <field name="communes" reuseLastValue="0"/>
+    <field name="comporteme" reuseLastValue="0"/>
+    <field name="confidenti" reuseLastValue="0"/>
+    <field name="date_debut" reuseLastValue="0"/>
+    <field name="date_fin" reuseLastValue="0"/>
+    <field name="ecologie" reuseLastValue="0"/>
+    <field name="famille" reuseLastValue="0"/>
+    <field name="floraison" reuseLastValue="0"/>
+    <field name="fournisseu" reuseLastValue="0"/>
+    <field name="geojson_43" reuseLastValue="0"/>
+    <field name="id" reuseLastValue="0"/>
+    <field name="id (2)" reuseLastValue="0"/>
+    <field name="indicatrice_ZH" reuseLastValue="0"/>
+    <field name="jdd_nom" reuseLastValue="0"/>
+    <field name="jdd_uuid" reuseLastValue="0"/>
+    <field name="nom_valide" reuseLastValue="0"/>
+    <field name="nom_vernac" reuseLastValue="0"/>
+    <field name="nombre_max" reuseLastValue="0"/>
+    <field name="nombre_min" reuseLastValue="0"/>
+    <field name="observateu" reuseLastValue="0"/>
+    <field name="ordre" reuseLastValue="0"/>
+    <field name="precision_" reuseLastValue="0"/>
+    <field name="sensibilit" reuseLastValue="0"/>
+    <field name="sexe" reuseLastValue="0"/>
+    <field name="stade_vie" reuseLastValue="0"/>
+    <field name="statut_bio" reuseLastValue="0"/>
+    <field name="syntaxon" reuseLastValue="0"/>
+    <field name="technique_" reuseLastValue="0"/>
+    <field name="type_preci" reuseLastValue="0"/>
+    <field name="type_sourc" reuseLastValue="0"/>
+    <field name="uuid_per_1" reuseLastValue="0"/>
+    <field name="uuid_perm_" reuseLastValue="0"/>
+    <field name="x_centroid" reuseLastValue="0"/>
+    <field name="y_centroid" reuseLastValue="0"/>
   </reuseLastValue>
   <dataDefinedFieldProperties/>
   <widgets/>
