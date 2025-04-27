@@ -7,6 +7,7 @@ if(!require("ggrepel")){install.packages("ggrepel")} ; library("ggrepel")
 if(!require("factoextra")){install.packages("factoextra")} ; library("factoextra")
 if(!require("indicspecies")){install.packages("indicspecies")} ; library("indicspecies") #multipatt
 if(!require("ggdendro")){install.packages("ggdendro")} ; library("ggdendro")
+if(!require("tidyverse")){install.packages("tidyverse")} ; library("tidyverse")
 
 
 # Chargement des données depuis BiodiversitySQL ####
@@ -194,3 +195,4 @@ ggplot(indval_long, aes(x = reorder(espece, stat), y = stat, fill = groupe)) +
     fill = "Groupe"
   ) +
   theme_minimal()
+
