@@ -2,7 +2,7 @@ if(!require("readxl")){install.packages("readxl")} ; library("readxl")
 if(!require("readODS")){install.packages("readODS")} ; library("readODS")
 if(!require("tidyverse")){install.packages("tidyverse")} ; library("tidyverse")
 
-# Permet de charger un tableay en attribuant un nom 
+# Permet de charger un tableay en attribuant un nom
 load_data <- function(data_name, 
                       path, 
                       sep = ";", 
@@ -29,13 +29,14 @@ updatetaxa = function(liste_cd_nom){
 
 ###################Renvoie le CD_NOM actualisé à partir d'une liste d'espèce
 findtaxa = function(listetaxa,
-                    referenciel = "TAXREF_70",
+                    referenciel = "taxref",
                     correspondance_type = "simple",
                     actualisation_CD_NOM = TRUE){
  
-   if(referenciel == "TAXREF_70"){
+   if(referenciel == "taxref"){
      
-     load_data("taxadata","data/TAXREF_17/TAXREFv17_FLORE_FR.csv",sep=",")
+     taxref = dbGetQuery(con, "SELECT * FROM public.taxref_flore_fr_syn")
+     
    }
   if(correspondance_type=="simple"){
     listetaxa = data.frame("LB_NOM" = listetaxa)
@@ -46,7 +47,7 @@ findtaxa = function(listetaxa,
 }
 
 ############################################################   find_taxaref 
-#############Réalise un match entre 2 référentiels taxonomiques
+# Réalise un match entre 2 référentiels taxonomiques
 
 find_taxaref <- function(
                          lb_taxa_entree,code_taxa_entree = NA, ref='taxref'
@@ -54,17 +55,16 @@ find_taxaref <- function(
   entree = data.frame(code_taxa_entree = code_taxa_entree,lb_taxa_entree = lb_taxa_entree)
 
   if(ref == 'taxref'){
-    load_data("taxref","data/TAXREF_17/TAXREFv17_FLORE_FR_SYN.csv",sep=",")
-    taxaref = taxref
+    taxref = dbGetQuery(con, "SELECT * FROM public.taxref_flore_fr_syn")
   }
 
   #Préparation du tableau entree
   entree <- entree %>%
-    mutate(CD_NOM = NA_character_)
+    mutate(cd_nom = NA_character_)
   entree <- entree %>%
-    mutate(LB_NOM = NA_character_)
+    mutate(lb_nom = NA_character_)
   entree <- entree %>%
-    mutate(RANG = NA_character_)
+    mutate(rang = NA_character_)
   
   # Correction des adjectifs de rangs
   entree$lb_taxa_entree = str_replace(entree$lb_taxa_entree,'ssp.','subsp.')
@@ -76,36 +76,46 @@ find_taxaref <- function(
   
   # Ajoute une colonne de RANG au tableau entree
   for(i in 1:nrow(entree)){
-    cat('RANG : ',i,'/',nrow(entree),'\n')
+    cat('rang : ',i,'/',nrow(entree),'\n')
     if(str_detect(entree$lb_taxa_entree[i],'subsp.')){
-      entree$RANG[i] = 'SSES'
+      entree$rang[i] = 'SSES'
     }
     else if(str_detect(entree$lb_taxa_entree[i],'var.')){
-      entree$RANG[i] = 'VAR'
+      entree$rang[i] = 'VAR'
     }
-    else{entree$RANG[i] = 'ES'}
+    else{entree$rang[i] = 'ES'}
   }
   
+  entree$cd_nom = '_NOMATCH'
+  entree$lb_nom = '_NOMATCH'
   
-  for (i in 1:nrow(taxaref)) {
-    cat('RATACH : ',i,'/',nrow(taxaref),'\n')
-    lb_nom <- taxaref$LB_NOM[i]
-    cd_nom <- taxaref$CD_NOM[i]
-    
+  for (i in 1:nrow(entree)) {
+    cat('RATACH : ',i,'/',nrow(entree),'\n')
+
     # Trouver les correspondances
-    matches <- str_detect(entree[entree$RANG == taxaref$RANG[i],]$lb_taxa_entree, fixed(lb_nom))
+    if(str_detect(entree$lb_taxa_entree[i]," x ")){
+      
+      taxref_rang = taxref[taxref$rang==entree$rang[i],]
+      
+    } else {
+      taxref_rang = taxref[taxref$rang==entree$rang[i] & !str_detect(taxref$lb_nom," x "),]
+    }
+    matches <- str_detect(taxref_rang$lb_nom,fixed(entree$lb_taxa_entree[i]))
     
-    # Mettre à jour la colonne CD_NOM pour les correspondances trouvées
-    entree[entree$RANG == taxaref$RANG[i],]$CD_NOM[matches] <- cd_nom
-    entree[entree$RANG == taxaref$RANG[i],]$LB_NOM[matches] <- lb_nom
+    # Vérifier les hybrides
+    
+    if(any(matches)){
+      lb_nom = taxref_rang[matches==TRUE,]$lb_nom
+      cd_nom = taxref_rang[matches==TRUE,]$cd_nom
+      
+     # Mettre à jour la colonne CD_NOM pour les correspondances trouvées
+      entree$cd_nom[i] <- cd_nom
+      entree$lb_nom[i] <- lb_nom
+    }
+
   }
-  entree[is.na(entree$CD_NOM),]$CD_NOM = '_NOMATCH'
-  entree[is.na(entree$LB_NOM),]$LB_NOM = '_NOMATCH'
-  
   #Mise à jour du code CD_REF
-  entree$CD_REF = updatetaxa(entree$CD_NOM)
+  entree$CD_REF = updatetaxa(entree$cd_nom)
   
   return(entree)
 }
-
-

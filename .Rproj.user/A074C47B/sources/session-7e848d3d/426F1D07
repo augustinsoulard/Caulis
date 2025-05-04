@@ -1,0 +1,27 @@
+{
+    "id": "426F1D07",
+    "path": "D:/Github/Caulis/script/inaturalist/scrap_data_inat.R",
+    "project_path": "script/inaturalist/scrap_data_inat.R",
+    "type": "r_source",
+    "hash": "641867268",
+    "contents": "",
+    "dirty": false,
+    "created": 1746110590291.0,
+    "source_on_save": false,
+    "relative_order": 4,
+    "properties": {
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "45,16",
+        "scrollLine": "32",
+        "docOutlineVisible": "1"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1746378661,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1746378661288,
+    "read_only": false,
+    "read_only_alternatives": []
+}
