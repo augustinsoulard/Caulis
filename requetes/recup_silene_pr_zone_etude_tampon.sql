@@ -7,7 +7,15 @@ JOIN (
 ) AS buffer_zone
 ON ST_Intersects(ps.geom, buffer_zone.geom_buffer);
 
-
+-- Flore patrimoniale
+SELECT ps.*
+FROM public.point_silene_patri ps
+JOIN (
+    SELECT ST_Union(ST_Buffer(geom, 10)) AS geom_buffer
+    FROM projet.zone_etude
+    WHERE code IN (1001)
+) AS buffer_zone
+ON ST_Intersects(ps.geom, buffer_zone.geom_buffer);
 
 
 
