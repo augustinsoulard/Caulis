@@ -74,4 +74,10 @@ inat_to_add <- inat_to_add %>% rename(geom = geometry)
 st_geometry(inat_to_add) <- "geom"
 
 # 4. Puis écrire
-write_to_schema(con, "donnees", "flore", inat_to_add, append = TRUE)
+insert_on_conflict(
+  con = con,
+  schema = "donnees",
+  table = "flore",
+  df = inat_to_add,
+  key = "uuid"
+)
