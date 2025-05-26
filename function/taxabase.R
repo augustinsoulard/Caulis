@@ -50,7 +50,10 @@ findtaxa = function(listetaxa,
 # Réalise un match entre 2 référentiels taxonomiques
 
 find_taxaref <- function(
-                         lb_taxa_entree,code_taxa_entree = NA, ref='taxref'
+                         lb_taxa_entree,
+                         code_taxa_entree = NA, 
+                         ref='taxref',
+                         input_ref="inaturalist"
 ){
   entree = data.frame(code_taxa_entree = code_taxa_entree,lb_taxa_entree = lb_taxa_entree)
 
@@ -74,6 +77,7 @@ find_taxaref <- function(
   entree$lb_taxa_entree = gsub("\\b(?!subsp\\.|var\\.)\\w+\\.", "", entree$lb_taxa_entree, perl=TRUE)
   entree$lb_taxa_entree = gsub("\\s+", " ", entree$lb_taxa_entree)
   
+  
   # Ajoute une colonne de RANG au tableau entree
   for(i in 1:nrow(entree)){
     cat('rang : ',i,'/',nrow(entree),'\n')
@@ -86,11 +90,21 @@ find_taxaref <- function(
     else{entree$rang[i] = 'ES'}
   }
   
+  # Dénition des colonnes cd_nom et lb_nom par défaut
   entree$cd_nom = '_NOMATCH'
   entree$lb_nom = '_NOMATCH'
   
+  # Retirer les marqueurs d'infrataxons pour la correspondance avec Inaturalist
+  if(input_ref=="inaturalist"){
+    taxref$lb_nom = taxref$lb_nom %>% 
+    str_replace(' subsp.','') %>% 
+    str_replace(' var.','') %>%
+    str_replace(' f.','')
+  }
+  
+  
   for (i in 1:nrow(entree)) {
-    cat('RATACH : ',i,'/',nrow(entree),'\n')
+    cat('CORRESP : ',i,'/',nrow(entree),'\n')
 
     # Trouver les correspondances
     if(str_detect(entree$lb_taxa_entree[i]," x ")){
@@ -101,6 +115,12 @@ find_taxaref <- function(
       taxref_rang = taxref[taxref$rang==entree$rang[i] & !str_detect(taxref$lb_nom," x "),]
     }
     matches <- str_detect(taxref_rang$lb_nom,fixed(entree$lb_taxa_entree[i]))
+    
+    # Pour Inaturalist tenter de faire une correpsondance des sous-espèces
+    if(input_ref=="inaturalist" & !any(matches)){
+      taxref_rang = taxref[taxref$rang=="SSES",]
+      matches <- str_detect(taxref_rang$lb_nom,fixed(entree$lb_taxa_entree[i]))
+    }
     
     # Vérifier les hybrides
     
@@ -115,7 +135,7 @@ find_taxaref <- function(
 
   }
   #Mise à jour du code CD_REF
-  entree$CD_REF = updatetaxa(entree$cd_nom)
+  entree$cd_ref = updatetaxa(entree$cd_nom)
   
   return(entree)
 }

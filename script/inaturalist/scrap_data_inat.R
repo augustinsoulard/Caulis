@@ -15,6 +15,7 @@ obs = read.csv(choose.files())
 
 
 head(obs)
+# Nettoyage des données
 obs = obs[grepl(" ", obs$scientific_name)  & !is.na(obs$scientific_name) & obs$iconic_taxon_name == 'Plantae',]
 
 # Possibilité de charger un fichier csv téléchargé
@@ -35,7 +36,11 @@ unknow_taxa = unique(obs_unknow[, c("scientific_name", "taxon_id")])
 
 # find_taxaref ####
 
-new_corresp = find_taxaref(unknow_taxa$scientific_name,unknow_taxa$taxon_id, ref ='taxref')
+new_corresp = find_taxaref(lb_taxa_entree = unknow_taxa$scientific_name,
+                           code_taxa_entree = unknow_taxa$taxon_id, 
+                           ref ='taxref',
+                           input_ref="inaturalist"
+                           )
 view(new_corresp)
 
 
