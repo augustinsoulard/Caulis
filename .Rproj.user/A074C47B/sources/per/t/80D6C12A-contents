@@ -1,7 +1,7 @@
 if(!require("sf")){install.packages("sf")} ; library("sf")
 if(!require("tidyverse")){install.packages("tidyverse")} ; library("tidyverse")
-
-
+source("function/postgres/postgres_manip.R")
+con = copo() # Connexion à la bdd
 # Lecture des observation via INaturalist ou un fichier téléchargé ####
 obs = inat_from_polygon(requete = "SELECT * FROM projet.zone_etude WHERE code IN (19);",
                         year = NULL,
@@ -34,12 +34,12 @@ corresp_inat_taxref = dbGetQuery(con, "SELECT * FROM inaturalist.corresp_taxref"
 
 inat_to_add = left_join(obs,corresp_inat_taxref,by=c("taxon_id"="code_taxa_entree")) %>% 
                             select(CD_REF = cd_ref,
-                                      Nom = lb_nom,                                                                   
-                                      Observateur=user_name,
-                                      Date = observed_on,
-                                      Heure = time_observed_at,
+                                      nom = lb_nom,                                                                   
+                                      observateur=user_name,
+                                      date = observed_on,
+                                      heure = time_observed_at,
                                       lieu = place_guess,
-                                      Statut = captive_cultivated,
+                                      statut = captive_cultivated,
                                       url,
                                       longitude,
                                       latitude,

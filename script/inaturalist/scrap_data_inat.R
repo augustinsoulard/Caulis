@@ -4,7 +4,7 @@ if(!require("leaflet")){install.packages("leaflet")} ; library("leaflet")
 if(!require("rinat")){install.packages("rinat")} ; library("rinat")
 if(!require("rtaxref")){install_github("Rekyt/rtaxref")} ; library("rtaxref")
 source("function/taxabase.R")
-source("function/postgres_manip.R")
+source("function/postgres/postgres_manip.R")
 
 # Lecture des observation via INaturalist ou un fichier téléchargé ####
 obs = inat_from_polygon(requete = "SELECT * FROM projet.zone_etude WHERE code IN (19);",
