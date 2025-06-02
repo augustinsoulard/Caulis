@@ -1,0 +1,14 @@
+# Charger les bibliotheques necessaires
+if(!require("readxl")){install.packages("readxl")} ; library("readxl")
+if(!require("tidyverse")){install.packages("tidyverse")} ; library("tidyverse")
+source("function/taxabase.R")
+source("function/habref_function.R")
+
+
+# Appel de la fonction avec l'exemple "Que ile"
+find_taxon_hab("Malva",FCD_TYPO = c(28,107,7,8,22))
+
+
+#rattachement aux habitats
+HAB = hab_match(seuil = 2)
+st_write(HAB,"Habitats/HAB.shp",delete_layer = TRUE)

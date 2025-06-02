@@ -1,0 +1,27 @@
+{
+    "id": "F36323FF",
+    "path": "D:/Github/Caulis/script/phytosociologie/phytosocio_habref_baseflor.R",
+    "project_path": "script/phytosociologie/phytosocio_habref_baseflor.R",
+    "type": "r_source",
+    "hash": "2510903250",
+    "contents": "",
+    "dirty": false,
+    "created": 1748857256023.0,
+    "source_on_save": false,
+    "relative_order": 9,
+    "properties": {
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "21,0",
+        "scrollLine": "0",
+        "docOutlineVisible": "1"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1748859342,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1748859342758,
+    "read_only": false,
+    "read_only_alternatives": []
+}
