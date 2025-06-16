@@ -19,3 +19,23 @@ WHERE
 
 
 SELECT * FROM public.point_silene_patri
+
+
+-- Pour avoir toutes les espèces dans une couche
+CREATE OR REPLACE VIEW bibliotaxa.point_silene_view AS
+SELECT 
+    b.cd_ref,
+    b.geom,
+    b.date_debut,
+    b.nom_valide,
+    b.nom_vernac,
+    a."INTERET_PACA",
+    a."PROTECTION_PACA"
+FROM 
+    bibliotaxa.point_silene AS b
+INNER JOIN 
+    public.method_enjeu_paca AS a
+ON 
+    a.cd_ref = b.cd_ref
+
+SELECT * FROM bibliotaxa.point_silene_view
