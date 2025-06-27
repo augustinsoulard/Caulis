@@ -1,0 +1,153 @@
+---
+title: "Rapport des habitats par relevé"
+author: "Augustin Soulard"
+output: 
+  word_document:
+    reference_docx: "style/word_styles_references.dotm"
+---
+
+```{r setup, include=FALSE}
+# Chargement des packages
+if(!require("tidyverse")) install.packages("tidyverse")
+library(tidyverse)
+
+if(!require("caulisroot")) devtools::install("../caulisroot")
+library(caulisroot)
+
+library(ggplot2)
+library(forcats)
+library(viridis)
+
+
+source("../function/postgres/postgres_manip.R")
+source("../function/taxabase.R")
+source("../function/habitats/habref_manip.R")
+
+# Connexion à la base de données
+con <- copo()
+
+# Chargement des données
+habref_esp <- dbGetQuery(con, '
+SELECT 
+  t2."cd_hab",
+  t2."FG_VALIDITE",
+  t2."cd_typo",
+  t2."lb_code",
+  t2."lb_hab_fr",
+  t2."lb_hab_fr_complet",
+  t2."LB_HAB_EN",
+  t2."LB_AUTEUR",
+  t2."niveau",
+  t2."lb_niveau",
+  t2."cd_hab_sup",
+  t2."PATH_CD_HAB",
+  t2."france",
+  t2."lb_description",
+  t1."cd_corresp_tax",
+  t1."cd_hab_entree",
+  t1."cd_nom",
+  t1."CD_TYPE_RELATION",
+  t1."LB_CONDITION",
+  t1."LB_REMARQUES",
+  t1."NOM_CITE",
+  t1."nom_cite_match",
+  t1."VALIDITE",
+  t1."DATE_CREA",
+  t1."DATE_MODIF" 
+FROM habref.habref_corresp_taxon_70 AS t1
+LEFT JOIN habref.habref_70 AS t2
+  ON t1."cd_hab_entree" = t2."cd_hab"
+WHERE t2."cd_typo" IN (\'4\', \'7\', \'8\', \'22\', \'18\', \'28\', \'107\', \'100\') 
+  AND t2."france" = \'true\'
+  AND t1."cd_nom" IS NOT NULL
+  AND t1."cd_nom" <> \'\'
+  AND t2."cd_hab" IS NOT NULL
+  AND t2."cd_hab" <> \'\';
+')
+
+habref_esp <- rarete_occurence(habref_esp)
+
+# Charger les données QBiome
+charger_gpkg(layers = c("Flore", "Releve_Phyto"),"D:/TEMP/Donnees.gpkg") 
+
+# Ajouter cd_nom
+Flore <- findtaxa("Nom", Flore)
+
+# Jointure
+florehab <- left_join(st_drop_geometry(Flore), habref_esp, by = "cd_nom", relationship = "many-to-many") %>%
+  filter(!is.na(Releve))
+
+# Génération des tableaux
+habitats_releve_esp <- florehab %>%
+  distinct(Releve, cd_hab, lb_code, lb_hab_fr, lb_nom) %>%
+  group_by(Releve, cd_hab, lb_code, lb_hab_fr, lb_nom) %>%
+  summarise(nb = n(), .groups = "drop") %>%
+  arrange(Releve, desc(nb)) %>%
+  group_by(Releve, lb_nom) %>%
+  slice_max(nb, n = 10, with_ties = FALSE) %>%
+  ungroup() %>%
+  select(Releve, lb_code, lb_hab_fr, lb_nom, nb) %>%
+  filter(!is.na(lb_hab_fr))
+
+habitats_releve <- florehab %>%
+  distinct(Releve, cd_hab, lb_code, lb_hab_fr, lb_nom) %>%
+  group_by(Releve, cd_hab, lb_code, lb_hab_fr) %>%
+  summarise(nb = n(), .groups = "drop") %>%
+  arrange(Releve, desc(nb)) %>%
+  group_by(Releve) %>%
+  slice_max(nb, n = 10, with_ties = FALSE) %>%
+  ungroup() %>%
+  select(Releve, lb_code, lb_hab_fr, nb) %>%
+  filter(!is.na(lb_hab_fr))
+
+releves <- unique(habitats_releve$Releve)
+
+for (r in releves) {
+  
+  cat(paste0("\n\n### Relevé : ", r, "\n\n"))
+  
+  # Affichage du tableau habitats_releve
+  cat("#### Tableau : Habitat par relevé\n\n")
+  print(knitr::kable(habitats_releve %>% filter(Releve == r)))
+  
+  # Affichage du tableau habitats_releve_esp
+  cat("\n\n#### Tableau : Habitat par relevé et espèce\n\n")
+  print(knitr::kable(habitats_releve_esp %>% filter(Releve == r)))
+  
+  # Graphique 1 : fréquence des habitats
+  p1 <- habitats_releve %>%
+    filter(Releve == r) %>%
+    mutate(nom_habitat = paste(lb_code, lb_hab_fr),
+           nom_habitat = fct_reorder(nom_habitat, nb)) %>%
+    ggplot(aes(x = nb, y = nom_habitat)) +
+    geom_col(fill = "darkgreen") +
+    labs(title = paste("Fréquence des habitats – Relevé", r),
+         x = "Nb espèces caractéristiques", y = "Habitat") +
+    theme_minimal(base_size = 11)
+  print(p1)
+  
+  # Graphique 2 : Espèces × habitats les plus riches
+  df_plot <- florehab %>%
+    filter(Releve == r, !is.na(lb_hab_fr)) %>%
+    mutate(nom_habitat = paste(lb_code, lb_hab_fr)) %>%
+    distinct(nom_habitat, lb_nom)
+  
+  top_habitats <- df_plot %>%
+    count(nom_habitat, name = "nb_especes") %>%
+    slice_max(nb_especes, n = 10, with_ties = FALSE)
+  
+  df_plot2 <- df_plot %>%
+    filter(nom_habitat %in% top_habitats$nom_habitat)
+  
+  p2 <- ggplot(df_plot2, aes(x = lb_nom, y = nom_habitat, fill = 1)) +
+    geom_tile(color = "white") +
+    scale_fill_viridis_c(guide = "none") +
+    labs(title = paste("Espèces × Habitats – Relevé", r),
+         x = "Espèces", y = "Top habitats") +
+    theme_minimal(base_size = 11) +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1),
+          axis.text.y = element_text(size = 8))
+  print(p2)
+}
+
+## rmarkdown::render("rmarkdown/rmarkdown_phytosocio.Rmd")
