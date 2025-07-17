@@ -1,0 +1,26 @@
+{
+    "id": "00A0CE38",
+    "path": "D:/Github/Caulis/function/taxref_baseflor.R",
+    "project_path": "function/taxref_baseflor.R",
+    "type": "r_source",
+    "hash": "1942921556",
+    "contents": "",
+    "dirty": false,
+    "created": 1752765947042.0,
+    "source_on_save": false,
+    "relative_order": 14,
+    "properties": {
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "75,52",
+        "scrollLine": "0"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1752770955,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1752770955273,
+    "read_only": false,
+    "read_only_alternatives": []
+}

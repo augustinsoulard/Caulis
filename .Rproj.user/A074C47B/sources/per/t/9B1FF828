@@ -1,0 +1,28 @@
+{
+    "id": "9B1FF828",
+    "path": "D:/Github/Caulis/function/postgres/postgres_manip.R",
+    "project_path": "function/postgres/postgres_manip.R",
+    "type": "r_source",
+    "hash": "2386999363",
+    "contents": "",
+    "dirty": false,
+    "created": 1752763199892.0,
+    "source_on_save": false,
+    "relative_order": 30,
+    "properties": {
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "71,2",
+        "scrollLine": "45",
+        "docOutlineVisible": "1",
+        "docOutlineSize": "211"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1752763441,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1752763441625,
+    "read_only": false,
+    "read_only_alternatives": []
+}
