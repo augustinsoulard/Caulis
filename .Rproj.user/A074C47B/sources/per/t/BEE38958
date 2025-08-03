@@ -1,0 +1,27 @@
+{
+    "id": "BEE38958",
+    "path": "D:/Github/Caulis/rmarkdown/test1_rmarkdown.Rmd",
+    "project_path": "rmarkdown/test1_rmarkdown.Rmd",
+    "type": "r_markdown",
+    "hash": "2139345173",
+    "contents": "",
+    "dirty": false,
+    "created": 1753719274976.0,
+    "source_on_save": false,
+    "relative_order": 16,
+    "properties": {
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "136,28",
+        "scrollLine": "0",
+        "last_setup_crc32": ""
+    },
+    "folds": "168|34|210|0|\n212|33|247|0|\n",
+    "lastKnownWriteTime": 1753723725,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1753723909532,
+    "read_only": false,
+    "read_only_alternatives": []
+}

@@ -1,0 +1,28 @@
+{
+    "id": "E72F4805",
+    "path": null,
+    "project_path": null,
+    "type": "object_explorer",
+    "hash": "0",
+    "contents": "",
+    "dirty": false,
+    "created": 1753721455136.0,
+    "source_on_save": false,
+    "relative_order": 17,
+    "properties": {
+        "id": "d4e642f4a9b443d8aa77ae1909bd3302",
+        "name": "layers_info",
+        "title": "layers_info",
+        "language": "R",
+        "source_window_id": "",
+        "Source": "Source"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1753721449,
+    "encoding": "",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1753721455136,
+    "read_only": false,
+    "read_only_alternatives": []
+}
