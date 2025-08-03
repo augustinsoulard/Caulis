@@ -1,4 +1,6 @@
 # Chargement des bibliothèques nécessaires
+library(ggplot2)
+library(ggrepel)
 library(shiny)
 library(tidyr)
 library(dplyr)
@@ -6,6 +8,7 @@ library(DT)        # Pour les tableaux interactifs
 library(ape)       # Pour la visualisation de l'arbre de classification
 library(data.table) # Pour utiliser dcast()
 library(vegan)     # Pour NMDS et analyse de similarité
+library(indicspecies) # Pour les espèces indicatrices avec multipatt()
 
 # Fonction pour convertir les codes Braun-Blanquet en valeurs numériques (ex: '+' = 1, '1' = 2, etc.)
 convert_bb <- function(x) {
@@ -21,14 +24,23 @@ ui <- navbarPage("Application Phytosociologique",
                           sidebarLayout(
                             sidebarPanel(
                               fileInput("file", "Charger un fichier CSV", accept = ".csv"),
-                              actionButton("run", "Lancer l'analyse"),
-                                                          ),
+                              uiOutput("select_releves"),
+                              numericInput("n_clusters", "Nombre de groupes à identifier:", value = 2, min = 2),
+                              actionButton("run", "Lancer l'analyse")
+                            ),
                             mainPanel(
                               tabsetPanel(
                                 tabPanel("Données brutes (head)", tableOutput("data_head")),
                                 tabPanel("Données pivotées", DTOutput("pivoted_data"),downloadButton("download_pivoted", "Télécharger les données pivotées")),
                                 tabPanel("Classification", plotOutput("clustering_plot")),
-                                tabPanel("Ordination (NMDS)", plotOutput("nmds_plot"))
+                                tabPanel("Ordination (NMDS)", plotOutput("nmds_plot")),
+                                tabPanel("Espèces caractéristiques",
+                                         HTML("<p><strong>Définition :</strong> Cette section utilise la fonction <code>multipatt()</code> du package <code>indicspecies</code> pour identifier les espèces les plus représentatives (indicatrices) des groupes de relevés définis par la classification hiérarchique. Elle calcule pour chaque espèce un score combinant sa fidélité (présence fréquente dans un groupe) et sa spécificité (présence exclusive dans ce groupe). Même sans p-value significative, une forte valeur d'indice peut indiquer une affinité marquée avec un groupe.</p>"),
+                                         DTOutput("indval_table"),
+                                         DTOutput("groupe_releves_table"),
+                                         downloadButton("download_indval", "Télécharger les espèces caractéristiques"),
+                                         downloadButton("download_groupes", "Télécharger les relevés par groupe")
+                                )
                               )
                             )
                           )
@@ -41,9 +53,8 @@ ui <- navbarPage("Application Phytosociologique",
 )
 
 # Partie serveur de l'application
-server <- function(input, output) {
+server <- function(input, output, session) {
   
-  # Lecture du fichier CSV avec séparateur ';'
   data_input <- reactive({
     req(input$file)
     read.csv(input$file$datapath, stringsAsFactors = FALSE, sep = ";")
@@ -51,6 +62,12 @@ server <- function(input, output) {
   
   output$data_head <- renderTable({
     head(data_input(), 10)
+  })
+  
+  output$select_releves <- renderUI({
+    req(data_input())
+    releves <- unique(data_input()$releve)
+    checkboxGroupInput("selected_releves", "Relevés à inclure:", choices = releves, selected = releves)
   })
   
   data_pivoted <- eventReactive(input$run, {
@@ -62,6 +79,7 @@ server <- function(input, output) {
       stop(paste("Colonnes manquantes dans le fichier :", paste(missing_cols, collapse = ", ")))
     }
     df <- df %>%
+      filter(releve %in% input$selected_releves) %>%
       mutate(abondance_dominance = trimws(as.character(abondance_dominance))) %>%
       mutate(abondance = convert_bb(abondance_dominance)) %>%
       filter(!is.na(abondance)) %>%
@@ -99,20 +117,96 @@ server <- function(input, output) {
     }
   )
   
-  # Classification hiérarchique
+  cluster_membership <- reactive({
+    mat <- data_pivoted()
+    dist_mat <- vegdist(mat, method = "bray")
+    clust <- hclust(dist_mat, method = "ward.D2")
+    cutree(clust, k = input$n_clusters)
+  })
+  
   output$clustering_plot <- renderPlot({
     mat <- data_pivoted()
     dist_mat <- vegdist(mat, method = "bray")
     clust <- hclust(dist_mat, method = "ward.D2")
     plot(clust, main = "Classification hiérarchique (Bray-Curtis)", xlab = "", sub = "")
+    rect.hclust(clust, k = input$n_clusters, border = 2:6)
   })
   
-  # Ordination NMDS
   output$nmds_plot <- renderPlot({
     mat <- data_pivoted()
     nmds <- metaMDS(mat, k = 2, trymax = 100, autotransform = FALSE)
-    plot(nmds, type = "t", main = "Ordination NMDS")
+    nmds_sites <- as.data.frame(scores(nmds, display = "sites"))
+    nmds_sites$label <- rownames(nmds_sites)
+    
+    ggplot(nmds_sites, aes(x = NMDS1, y = NMDS2)) +
+      geom_point(color = "steelblue", size = 3) +
+      ggrepel::geom_text_repel(aes(label = label), size = 3, max.overlaps = 100) +
+      theme_minimal() +
+      labs(title = "Ordination NMDS", x = "NMDS 1", y = "NMDS 2") +
+      coord_equal()
   })
+  
+  output$indval_table <- renderDT({
+    mat <- data_pivoted()
+    groups <- factor(cluster_membership())
+    if (length(unique(groups)) < 2) {
+      return(datatable(data.frame(Message = "Moins de 2 groupes détectés")))
+    }
+    indval_res <- multipatt(mat, groups, func = "IndVal.g", duleg = TRUE, control = how(nperm = 999))
+    indval_df <- as.data.frame(indval_res$sign)
+    if (nrow(indval_df) == 0) {
+      return(datatable(data.frame(Message = "Aucune espèce caractéristique détectée (p > 0.05)")))
+    }
+    indval_df$Espèce <- rownames(indval_df)
+    indval_df <- indval_df %>%
+      filter(p.value <= 0.05) %>%
+      mutate(Groupe = index) %>%
+      select(Espèce, Groupe, stat, p.value)
+    colnames(indval_df) <- c("Espèce", "Groupe indicateur", "Indice IndVal", "p-value")
+    datatable(indval_df, options = list(pageLength = 10, dom = 'Blfrtip'), filter = 'top')
+  })
+  
+  output$groupe_releves_table <- renderDT({
+    clusters <- cluster_membership()
+    df_groupes <- data.frame(Releve = names(clusters), Groupe = clusters)
+    df_summary <- df_groupes %>% 
+      group_by(Groupe) %>% 
+      summarise(Relevés = paste(Releve, collapse = ", "))
+    datatable(df_summary, options = list(pageLength = 5))
+  })
+  
+  output$download_indval <- downloadHandler(
+    filename = function() {
+      paste0("especes_caracteristiques_", Sys.Date(), ".csv")
+    },
+    content = function(file) {
+      mat <- data_pivoted()
+      groups <- factor(cluster_membership())
+      indval_res <- multipatt(mat, groups, func = "IndVal.g", duleg = TRUE, control = how(nperm = 999))
+      indval_df <- as.data.frame(indval_res$sign)
+      indval_df$Espèce <- rownames(indval_df)
+      indval_df <- indval_df %>%
+        filter(p.value <= 0.05) %>%
+        mutate(Groupe = index) %>%
+        select(Espèce, Groupe, stat, p.value)
+      colnames(indval_df) <- c("Espèce", "Groupe indicateur", "Indice IndVal", "p-value")
+      write.csv2(indval_df, file, row.names = FALSE)
+    }
+  )
+  
+  output$download_groupes <- downloadHandler(
+    filename = function() {
+      paste0("releves_par_groupe_", Sys.Date(), ".csv")
+    },
+    content = function(file) {
+      clusters <- cluster_membership()
+      df_groupes <- data.frame(Releve = names(clusters), Groupe = clusters)
+      df_summary <- df_groupes %>% 
+        group_by(Groupe) %>% 
+        summarise(Relevés = paste(Releve, collapse = ", "))
+      write.csv2(df_summary, file, row.names = FALSE)
+    }
+  )
   
   output$especes_par_releve <- renderDT({
     req(data_input())

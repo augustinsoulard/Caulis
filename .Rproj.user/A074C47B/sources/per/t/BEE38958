@@ -5,15 +5,15 @@
     "type": "r_markdown",
     "hash": "2139345173",
     "contents": "",
-    "dirty": false,
+    "dirty": true,
     "created": 1753719274976.0,
     "source_on_save": false,
     "relative_order": 16,
     "properties": {
         "source_window_id": "",
         "Source": "Source",
-        "cursorPosition": "136,28",
-        "scrollLine": "0",
+        "cursorPosition": "287,0",
+        "scrollLine": "278",
         "last_setup_crc32": ""
     },
     "folds": "168|34|210|0|\n212|33|247|0|\n",
@@ -21,7 +21,7 @@
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1753723909532,
+    "last_content_update": 1754239523583,
     "read_only": false,
     "read_only_alternatives": []
 }
