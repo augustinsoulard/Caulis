@@ -128,23 +128,34 @@ server <- function(input, output, session) {
     mat <- data_pivoted()
     dist_mat <- vegdist(mat, method = "bray")
     clust <- hclust(dist_mat, method = "ward.D2")
+    n <- as.integer(input$n_clusters)
+    group_colors <- RColorBrewer::brewer.pal(max(n, 3), "Set1")
     plot(clust, main = "Classification hiérarchique (Bray-Curtis)", xlab = "", sub = "")
-    rect.hclust(clust, k = input$n_clusters, border = 2:6)
+    rect.hclust(clust, k = n, border = group_colors)
+    legend("topright", legend = 1:n, fill = group_colors[1:n], border = NA, bty = "n")
   })
+  
   
   output$nmds_plot <- renderPlot({
     mat <- data_pivoted()
+    groups <- factor(cluster_membership())
     nmds <- metaMDS(mat, k = 2, trymax = 100, autotransform = FALSE)
     nmds_sites <- as.data.frame(scores(nmds, display = "sites"))
     nmds_sites$label <- rownames(nmds_sites)
+    nmds_sites$Groupe <- groups[rownames(nmds_sites)]
+    
+    stress_val <- round(nmds$stress, 3)
     
     ggplot(nmds_sites, aes(x = NMDS1, y = NMDS2)) +
-      geom_point(color = "steelblue", size = 3) +
+      geom_point(aes(color = Groupe), size = 3) +
       ggrepel::geom_text_repel(aes(label = label), size = 3, max.overlaps = 100) +
+      labs(title = "Ordination NMDS",
+           subtitle = paste("Stress:", stress_val),
+           x = "NMDS 1", y = "NMDS 2") +
       theme_minimal() +
-      labs(title = "Ordination NMDS", x = "NMDS 1", y = "NMDS 2") +
       coord_equal()
   })
+  
   
   output$indval_table <- renderDT({
     mat <- data_pivoted()
@@ -217,7 +228,11 @@ server <- function(input, output, session) {
     if (length(missing_cols) > 0) {
       return(DT::datatable(data.frame(Erreur = paste("Colonnes manquantes:", paste(missing_cols, collapse=", ")))))
     }
-    datatable(df %>% dplyr::select(releve, espece, strate, abondance_dominance), options = list(pageLength = 10))
+    datatable(
+      df %>% dplyr::select(releve, espece, strate, abondance_dominance),
+      options = list(pageLength = 10, dom = 'Blfrtip'),
+      filter = 'top'
+    )
   })
 }
 
