@@ -1,5 +1,13 @@
+# R / RStudio
 .Rproj.user/
 .Rhistory
 .RData
 .Ruserdata
-.Rhistory
+.Renviron
+.Rprofile
+
+# Temp & système
+*.tmp
+*.bak
+.DS_Store
+Thumbs.db
