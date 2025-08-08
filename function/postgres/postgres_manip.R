@@ -1,37 +1,3 @@
-copo = function(){ #COnnexion à la bdd POstgres
-  # Préparation de la BDD ####
-  ### Déclaraiton des variables d'environnement pour l'authentification ####
-  if (file.exists("D:/Logiciel/R/.Renviron")) {
-  Sys.setenv(R_ENVIRON = "G:/Mon Drive/Administratif/hz/.Renviron")
-  readRenviron(Sys.getenv("R_ENVIRON"))
-} else {
-  stop("Le fichier .Renviron n'existe pas ou n'est pas accessible.")
-}
-  readRenviron(Sys.getenv("R_ENVIRON"))
-  Sys.setenv(PGUSER = Sys.getenv("PGUSER"), PGPASSWORD = Sys.getenv("PGPASSWORD")) # Lancer cette commade avec les bons indentifiant
-  
-  
-  ### Chargement des packages ####
-  if(!require("RPostgreSQL")){install.packages("RPostgreSQL")} ; library("RPostgreSQL")
-  if(!require("RPostgres")){install.packages("RPostgres")} ; library("RPostgres")
-  
-  
-  # Charger le driver PostgreSQL
-  drv <- dbDriver("PostgreSQL")
-  
-  # Se connecter à la base de données
-  con <- dbConnect(RPostgres::Postgres(), dbname = "BiodiversitySQL")
-  return(con)
-}
-
-write_to_schema <- function(con, schema, table, data, append = FALSE, overwrite = FALSE) {
-  # Vérifie si le schéma existe (et lève une erreur sinon)
-  existing_schemas <- dbGetQuery(con, "SELECT schema_name FROM information_schema.schemata;")$schema_name
-  if (!(schema %in% existing_schemas)) {
-    stop(paste("Le schéma", schema, "n'existe pas dans la base de données."))
-  }
-}
-
 insert_on_conflict <- function(con, schema, table, df, key) {
   stopifnot(key %in% names(df))
   requireNamespace("glue")

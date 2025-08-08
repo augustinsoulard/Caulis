@@ -10,7 +10,13 @@ scrap_data_inat = function(requete=NULL,
   if(!require("sf")){install.packages("sf")} ; library("sf")
   if(!require("leaflet")){install.packages("leaflet")} ; library("leaflet")
   if(!require("rinat")){install.packages("rinat")} ; library("rinat")
-  if(!require("rtaxref")){install_github("Rekyt/rtaxref")} ; library("rtaxref")
+  if (!requireNamespace("rtaxref", quietly = TRUE)) {
+    install.packages("devtools")
+    library("devtools")
+    install_github("Rekyt/rtaxref")
+  }
+  library("rtaxref")
+  
   source("function/taxabase.R")
   source("function/postgres/postgres_manip.R")
   
@@ -110,6 +116,11 @@ scrap_data_inat = function(requete=NULL,
   # Reprise depuis l'objet sf avec géométrie
   points_l93$geom <- st_as_text(st_geometry(points_l93))  # WKT
   df_no_geom <- points_l93 %>% st_drop_geometry()
+  
+  print(df_no_geom)
+  message("Appuyez sur Entrée pour continuer...")
+  readline(prompt = "")
+  
   DBI::dbWriteTable(con, SQL("inaturalist.inat_work_data"), df_no_geom, overwrite = TRUE)
   # Étape 1 : ajouter la colonne geometry
   DBI::dbExecute(con, "
@@ -134,7 +145,7 @@ scrap_data_inat = function(requete=NULL,
   return(return)
 
 }
-scrap_data_inat(requete="SELECT * FROM projet.zone_etude WHERE code IN (24,29);",
+scrap_data_inat(requete=NULL,
                            year=NULL,
                            maxresult=900,
                            filter_user_login = "augustinsoulard")
