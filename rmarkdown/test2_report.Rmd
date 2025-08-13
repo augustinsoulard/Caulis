@@ -1,0 +1,181 @@
+---
+title: "Rapport des habitats QBiome"
+author: "Généré par ChatGPT"
+date: "`r Sys.Date()`"
+output:
+  word_document:
+    toc: true
+    toc_depth: 3
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+library(sf)
+library(dplyr)
+library(tidyr)
+library(knitr)
+library(kableExtra)
+library(DBI)
+library(RSQLite)
+
+# chemin vers le geopackage de données.  Si nécessaire, adaptez ce chemin.
+gpkg_path <- "Donnees.gpkg"
+
+# Chargement des couches principales.  Les géométries sont conservées pour
+# permettre d’éventuels traitements spatiaux ultérieurs, mais ne sont pas
+# affichées dans le rapport.
+habitats <- sf::st_read(gpkg_path, layer = "Habitat_S", quiet = TRUE)
+flore    <- sf::st_read(gpkg_path, layer = "Flore",      quiet = TRUE)
+releves  <- sf::st_read(gpkg_path, layer = "Releve_Phyto", quiet = TRUE)
+
+# La table des photos ne contient pas de géométrie et est lue via DBI pour
+# éviter les avertissements de sf.  On enlève la colonne fidiculaire si
+# nécessaire.  La colonne Photo contient normalement un chemin relatif vers
+# l’image ; on construit un chemin absolu en préfixant par le dossier du
+# geopackage.
+con <- DBI::dbConnect(RSQLite::SQLite(), gpkg_path)
+photos <- DBI::dbReadTable(con, "photos")
+DBI::dbDisconnect(con)
+
+# Préparation du chemin complet pour chaque photo.  Si la colonne Photo
+# contient déjà un chemin absolu, file.path ne le modifie pas.  On utilise
+# dirname(gpkg_path) pour récupérer le dossier des données.
+photo_dir <- dirname(normalizePath(gpkg_path))
+photos <- photos %>%
+  mutate(PhotoFullPath = file.path(photo_dir, Photo))
+
+# Pour éviter de manipuler les géométries dans les opérations de jointure,
+# on retire les colonnes geometry des tables lorsque c’est possible.
+habitats_df <- habitats %>% sf::st_set_geometry(NULL)
+flore_df    <- flore    %>% sf::st_set_geometry(NULL)
+releves_df  <- releves  %>% sf::st_set_geometry(NULL)
+
+# Création d’une liste globale d’espèces pour plus tard.  Certains taxons
+# peuvent être présents plusieurs fois selon la saison ou la phénologie ; on
+# en extrait une liste unique et on la classera alphabétiquement à la fin du
+# rapport.
+liste_globales_especes <- flore_df %>%
+  distinct(Nom) %>%
+  arrange(Nom)
+```
+
+# Introduction
+
+Ce rapport a été généré automatiquement à partir de la base de données QBiome.  Il présente, pour chaque habitat recensé, les informations d’habitat, les photos associées, les listes d’espèces présentes, les relevés phytosociologiques et leurs photos.  Les images sont réduites à une largeur de 300&nbsp;pixels afin de ne pas occuper tout l’espace disponible.  Une liste globale des espèces recensées sur le site est proposée en conclusion.
+
+```{r habitats_loop, results='asis'}
+# Boucle sur chaque habitat de la couche Habitat_S.  On crée un chapitre
+# spécifique par habitat.  Si plusieurs couches d’habitat sont utilisées
+# (Habitat_P, Habitat_L), il est possible de les fusionner au préalable.
+for (i in seq_len(nrow(habitats_df))) {
+  hab <- habitats_df[i, ]
+  # Titre de section pour l’habitat courant
+  cat("## Habitat : ", ifelse(is.na(hab$Nom), paste0("ID ", hab$fid), hab$Nom), "\n\n", sep = "")
+  
+  # Affichage éventuel des photos associées à cet habitat.  Les photos
+  # identifiées par la colonne Couche = "Habitat_S" et Entite = fid sont
+  # sélectionnées.  On les dispose deux par deux dans un tableau Markdown.
+  hab_photos <- photos %>%
+    filter(Couche == "Habitat_S", Entite == hab$fid)
+  if (nrow(hab_photos) > 0) {
+    cat("**Photographies de l’habitat**\n\n")
+    # Début du tableau
+    cat("| | |\n")
+    cat("|---|---|\n")
+    # Parcours deux par deux
+    for (j in seq(1, nrow(hab_photos), by = 2)) {
+      sub <- hab_photos[j:min(j + 1, nrow(hab_photos)), ]
+      cat("|")
+      for (k in seq_len(nrow(sub))) {
+        # Insertion de l’image avec largeur fixée à 300 px
+        cat("![](", sub$PhotoFullPath[k], "){width=300px} |", sep = "")
+      }
+      # Si une photo manque pour compléter la ligne, on ajoute une cellule vide
+      if (nrow(sub) == 1) cat(" |")
+      cat("\n")
+    }
+    cat("\n")
+  }
+  
+  # Liste des espèces associées à cet habitat.  On filtre la table Flore
+  # selon l’identifiant d’habitat (colonne Habitat) et on extrait les noms
+  # d’espèces distincts.  Si les identifiants sont stockés dans un autre
+  # champ (par exemple uuid), adapter ici la condition.
+  hab_especes <- flore_df %>%
+    filter(Habitat == hab$fid) %>%
+    distinct(Nom) %>%
+    arrange(Nom)
+  if (nrow(hab_especes) > 0) {
+    cat("**Espèces recensées dans cet habitat :**\n\n")
+    for (nom in hab_especes$Nom) {
+      cat("* ", nom, "\n", sep = "")
+    }
+    cat("\n")
+  } else {
+    cat("Aucune espèce n’a été associée à cet habitat.\n\n")
+  }
+  
+  # Relevés phytosociologiques associés à cet habitat.  On filtre les
+  # relevés selon la colonne Habitat et on les traite un par un.  Chaque
+  # relevé est présenté dans une sous-section avec sa liste d’espèces
+  # (y compris les codes de recouvrement) et ses photos.
+  hab_releves <- releves_df %>%
+    filter(Habitat == hab$fid)
+  if (nrow(hab_releves) > 0) {
+    cat("### Relevés phytosociologiques\n\n")
+    for (r in seq_len(nrow(hab_releves))) {
+      rel <- hab_releves[r, ]
+      cat("#### Relevé : ", ifelse(is.na(rel$Nom), paste0("ID ", rel$fid), rel$Nom), "\n\n", sep = "")
+      
+      # Espèces relevées dans ce relevé.  On utilise la colonne Releve de
+      # Flore pour relier les observations au relevé.  Les colonnes Strate
+      # et Releve_Recouvrement correspondent aux strates et aux codes
+      # Braun–Blanquet (+,1,2,3,4,5).  On conserve uniquement les
+      # colonnes pertinentes pour le tableau.
+      rel_especes <- flore_df %>%
+        filter(Releve == rel$fid) %>%
+        select(Espèce = Nom, Strate = Strate, `Code Braun–Blanquet` = Releve_Recouvrement)
+      if (nrow(rel_especes) > 0) {
+        kable(rel_especes, format = "markdown") %>%
+          kable_styling(full_width = FALSE)
+      } else {
+        cat("Aucune espèce n’a été associée à ce relevé.\n\n")
+      }
+      
+      # Photos du relevé.  Comme pour les habitats, on sélectionne les
+      # enregistrements dans la table photos où Couche vaut "Releve_Phyto"
+      # et Entite correspond à l’identifiant du relevé.  On dispose les
+      # images par paires.
+      rel_photos <- photos %>%
+        filter(Couche == "Releve_Phyto", Entite == rel$fid)
+      if (nrow(rel_photos) > 0) {
+        cat("\n*Photographies du relevé*\n\n")
+        cat("| | |\n")
+        cat("|---|---|\n")
+        for (j in seq(1, nrow(rel_photos), by = 2)) {
+          sub <- rel_photos[j:min(j + 1, nrow(rel_photos)), ]
+          cat("|")
+          for (k in seq_len(nrow(sub))) {
+            cat("![](", sub$PhotoFullPath[k], "){width=300px} |", sep = "")
+          }
+          if (nrow(sub) == 1) cat(" |")
+          cat("\n")
+        }
+        cat("\n")
+      }
+    }
+  } else {
+    cat("Aucun relevé phytosociologique n’a été associé à cet habitat.\n\n")
+  }
+}
+```
+
+# Liste globale des espèces
+
+La liste ci-dessous reprend l’ensemble des espèces recensées sur le site, toutes catégories d’habitats confondues.
+
+```{r global_species, results='asis'}
+for (nom in liste_globales_especes$Nom) {
+  cat("* ", nom, "\n", sep = "")
+}
+```
