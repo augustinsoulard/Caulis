@@ -26,7 +26,7 @@ updatetaxa = function(liste_cd_nom){
 }
 
 
-###################Renvoie le CD_NOM actualisé à partir d'une liste d'espèce
+################### DANS CAULISOOT MAIS A TRAITER
 findtaxa <- function(listetaxa,
                      data = NULL,
                      referenciel = "taxref",
