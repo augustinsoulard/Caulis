@@ -1,0 +1,224 @@
+---
+title: "Fiches espèces EEE – Flore Occitanie"
+output:
+  word_document:
+    reference_docx: word_styles_references.docx
+---
+
+```{r setup, include=FALSE}
+# Chargement des bibliothèques nécessaires. Si vous ne les avez pas,
+# pensez à les installer avec install.packages() au préalable.
+library(officer)
+library(flextable)
+library(dplyr)
+library(tools)
+library(caulisroot)
+
+con = copo()
+# Charger le tableau de référence
+vw_fiche_eee_flore_occitanie <- dbGetQuery(con, "SELECT * FROM statuts.vw_fiche_eee_flore_occitanie")
+vw_fiche_eee_flore_occitanie = vw_fiche_eee_flore_occitanie %>% filter(cd_nom %in% c(92572,117860))
+
+# Création d'un document Word basé sur le modèle fourni. Le modèle
+# "word_styles_references.dotm" doit être présent dans le répertoire de travail.
+doc <- read_docx(path = "word_styles_references.docx")
+
+# Fonction utilitaire pour créer les fiches d'une espèce
+for (i in seq_len(nrow(vw_fiche_eee_flore_occitanie))) {
+  row <- vw_fiche_eee_flore_occitanie[i, ]
+
+  # ===========================
+  # 1. Table des identifiants
+  # ===========================
+  # Création d'un tableau reprenant le nom vernaculaire, le nom scientifique
+  # et les trois statuts EEE (TAXREF, RMC et INVMED). Les en‑têtes sont
+  # réparties sur deux lignes : la première indique les titres principaux,
+  # la seconde détaille les statuts.
+  status_df <- data.frame(
+    nom_vern = row$nom_vern,
+    nom_scientifique = row$nom_valide,
+    taxref = as.character(row$cd_ref_taxref),
+    rmc = ifelse(is.na(row$rmc_mediterraneen_hors_corse), "", as.character(row$rmc_mediterraneen_hors_corse)),
+    invmed = ifelse(is.na(row$invmed_categorie_occ), "", as.character(row$invmed_categorie_occ)),
+    stringsAsFactors = FALSE
+  )
+
+  # >>> BEGIN REPLACE: construction de ft_status à partir de status_df
+
+# status_df existe déjà et contient : nom_vern, nom_scientifique, taxref, rmc, invmed
+# On s’assure que les NA deviennent des chaînes vides pour éviter toute erreur, même si les valeurs sont nulles
+# status_df → NA sécurisés en chaînes vides
+status_df[] <- lapply(status_df, function(x) {
+  x <- as.character(x)
+  x[is.na(x) | x == "NA"] <- ""
+  x
+})
+
+ft_status <- flextable(status_df)
+
+# En-tête détaillé (ligne du bas)
+ft_status <- set_header_labels(
+  ft_status,
+  nom_vern         = "Nom vernaculaire",
+  nom_scientifique = "Nom scientifique (TAXREF V.18)",
+  taxref           = "TAXREF",
+  rmc              = "Rhône-Méditerranée-Corse",
+  invmed           = "INVMED"
+)
+
+# En-tête supérieur : "Statut EEE PACA" sur 3 colonnes
+ft_status <- add_header_row(
+  ft_status,
+  values    = c("Nom vernaculaire", "Nom scientifique (TAXREF V.18)", "Statut EEE PACA"),
+  colwidths = c(1, 1, 3),
+  top       = TRUE
+)
+
+# Ne pas répéter les 2 premiers titres sur la 2e ligne d'en-tête (si elle existe)
+if (flextable::nrow_part(ft_status, part = "header") >= 2) {
+  ft_status <- compose(ft_status, part = "header", i = 2, j = 1, value = as_paragraph(""))
+  ft_status <- compose(ft_status, part = "header", i = 2, j = 2, value = as_paragraph(""))
+}
+
+# Style global : Calibri + bordures vert foncé
+ft_status <- font(ft_status, part = "all", fontname = "Calibri")
+bd <- fp_border(color = "#006400", width = 1.25)
+ft_status <- border_remove(ft_status)
+ft_status <- border_outer(ft_status, part = "all", border = bd)
+ft_status <- hline(ft_status, border = bd, part = "all")  # pas de i/j => pas de formules
+ft_status <- vline(ft_status, border = bd, part = "all")
+
+# Italique pour le nom scientifique (toutes les lignes sans formule)
+ft_status <- italic(ft_status, j = "nom_scientifique", part = "body", italic = TRUE)
+
+
+
+  # ===========================
+  # 2. Lignes descriptives
+  # ===========================
+  # Sélection des catégories écologiques et biologiques à afficher. Si vous
+  # souhaitez d'autres champs, ajoutez‑les ici.
+  morph_categories <- c(
+    "TYPE_BIOLOGIQUE",
+    "CARACTERISATION_ECOLOGIQUE_(HABITAT_OPTIMAL)",
+    "floraison",
+    "Lumière",
+    "Température"
+  )
+  morph_values <- sapply(morph_categories, function(col) {
+    val <- row[[col]]
+    if (is.na(val) || val == "" || val == "NA") "" else as.character(val)
+  })
+  morph_df <- data.frame(
+    Catégorie = morph_categories,
+    Valeur    = as.vector(morph_values),
+    stringsAsFactors = FALSE
+  )
+  ft_morph <- flextable(morph_df)
+  ft_morph <- set_header_labels(ft_morph, Catégorie = "", Valeur = "")
+  ft_morph <- fontsize(ft_morph, size = 11, part = "all")
+  ft_morph <- font(ft_morph, fontname = "Calibri", part = "all")
+  ft_morph <- border(ft_morph, border = fp_border(color = "#006400", width = 1), part = "all")
+  ft_morph <- align(ft_morph, align = "left", part = "all")
+
+  # ===========================
+  # 3. Sections de texte
+  # ===========================
+  desc_general <- ifelse(is.na(row$dscpt_esp)      , "", row$dscpt_esp)
+  desc_risque  <- ifelse(is.na(row$dscpt_risque_eee), "", row$dscpt_risque_eee)
+
+  # ===========================
+  # 4. Images et légendes
+  # ===========================
+  # Téléchargement de la photo si possible. En cas d'échec, aucune photo ne sera affichée.
+  photo_url  <- row$path
+  photo_file <- ""
+  if (!is.na(photo_url) && photo_url != "") {
+    ext <- tolower(gsub(".*\\.", ".", basename(photo_url)))
+    # Création d'un fichier temporaire avec l'extension correcte
+    temp_file <- tempfile(pattern = "photo_", fileext = ext)
+    # Tentative de téléchargement de l'image
+    try({
+      download.file(photo_url, destfile = temp_file, mode = "wb", quiet = TRUE)
+      photo_file <- temp_file
+    }, silent = TRUE)
+  }
+  # Construction du chemin vers la carte. Cette image doit être présente
+  # localement dans le dossier "CARTO". Si elle n'existe pas, une mention
+  # sera affichée à la place.
+  map_file <- file.path("CARTO", paste0(row$cd_nom, ".jpg"))
+
+  ft_images <- flextable(data.frame(Photo = "", Carte = "", stringsAsFactors = FALSE))
+  # Insertion de la photo
+  if (photo_file != "" && file.exists(photo_file)) {
+    ft_images <- compose(
+      ft_images, j = "Photo", i = 1,
+      value = as_paragraph(as_image(photo_file, width = 2.5, height = 2.5))
+    )
+  } else {
+    ft_images <- compose(
+      ft_images, j = "Photo", i = 1,
+      value = as_paragraph("Photo non disponible")
+    )
+  }
+  # Insertion de la carte
+  if (!is.na(map_file) && file.exists(map_file)) {
+    ft_images <- compose(
+      ft_images, j = "Carte", i = 1,
+      value = as_paragraph(as_image(map_file, width = 2.5, height = 2.5))
+    )
+  } else {
+    ft_images <- compose(
+      ft_images, j = "Carte", i = 1,
+      value = as_paragraph("Carte non disponible")
+    )
+  }
+  ft_images <- fontsize(ft_images, size = 10, part = "all")
+  ft_images <- font(ft_images, fontname = "Calibri", part = "all")
+  ft_images <- border(ft_images, border = fp_border(color = "#006400", width = 1), part = "all")
+  ft_images <- align(ft_images, align = "center", part = "all")
+
+  # Légendes des images
+  photo_legend_text <- paste("Photo de ", row$nom_vern, sep = "")
+  ft_legends <- flextable(
+    data.frame(
+      Légende_photo = photo_legend_text,
+      Légende_carte = "Répartition du taxon - Données SILENE",
+      stringsAsFactors = FALSE
+    )
+  )
+  ft_legends <- fontsize(ft_legends, size = 9, part = "all")
+  ft_legends <- font(ft_legends, fontname = "Calibri", part = "all")
+  ft_legends <- border(ft_legends, border = fp_border(color = "#006400", width = 1), part = "all")
+  ft_legends <- align(ft_legends, align = "center", part = "all")
+
+  # ===========================
+  # 5. Ajout au document
+  # ===========================
+  # On ajoute les différents blocs successivement. Un saut de page est
+  # inséré entre chaque espèce afin de les distinguer dans le document final.
+doc <- body_add_flextable(doc, ft_status)
+doc <- body_add_par(doc, "", style = "Normal")
+doc <- body_add_flextable(doc, ft_morph)
+doc <- body_add_par(doc, "", style = "Normal")
+doc <- body_add_par(doc, "Description générale", style = "heading 3")
+doc <- body_add_par(doc, desc_general, style = "Normal")
+doc <- body_add_par(doc, "", style = "Normal")
+doc <- body_add_par(doc, "Risques", style = "heading 3")
+doc <- body_add_par(doc, desc_risque, style = "Normal")
+doc <- body_add_par(doc, "", style = "Normal")
+doc <- body_add_par(doc, "Situation vis-à-vis du projet", style = "heading 3")
+doc <- body_add_par(doc, "", style = "Normal")
+doc <- body_add_par(doc, "", style = "Normal")
+doc <- body_add_flextable(doc, ft_images)
+doc <- body_add_flextable(doc, ft_legends)
+  # Ajout d'un saut de page sauf pour la dernière fiche
+if (i < nrow(vw_fiche_eee_flore_occitanie)) doc <- body_add_break(doc)
+
+}
+
+# Export du document Word final. Il sera enregistré dans le dossier de travail
+# sous le nom indiqué ci‑dessous.
+print(doc, target = "fiches_eee_flore_occitanie.docx")
+
+```

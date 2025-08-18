@@ -1,0 +1,359 @@
+---
+title: "Find compensation zone"
+author: "Augustin Soulard"
+date: "`r format(Sys.Date(), '%d %B %Y')`"
+output: word_document
+---
+
+# Méthode
+- Aller chercher le répertoire de fichier de travail
+- Récupérer les données bibliographiques
+- Trier les données bibliographiques utiles : flore corrélée, couches geologoqiques ou pédologiques etc...
+- Récupérer une occupation du sol comme le MOS ou utiliser une des couches bibliographiques (geologie) à défaut
+
+# Structure des données de départ
+- Fichier geopackage biblio_flore.gpkg qui contient une couche point_silene
+- Une base de données en postGRESQL qui s'ouvre avec la fonction con = copo(). Dans cette base de données :
+  - la couche MOS (mos_mamp_2017)
+  - La couche de cartographie des sol (carte_sol_pedologie_inra_paca)
+
+Dans mon exemple ci-après les espèces à prendre en compte sont les suivantes :
+- Tragus racemoqus (similitude stationnelle)
+- Ononis natrix  
+- Alkanna matthioli  
+- Artemisa campestris  
+- Corynephorus canescens  
+- Vulpia membranacea  
+- Phleum arenarium  
+- Silene portensis  
+- Silene conica  
+- Bassia laniflora   
+- Silene otites   
+- Pinus pinaster(corrélation à la roche mère)
+- Populus nigra (corrélation à l'humidité)
+
+Chacune vaut 1 à 3 points pour la recherche du site de compensation selon leur affinité avec l'écologie de
+l'espèce cible. 
+
+C'est espèces doivent être rentée précédemments dans un tableau de la méthode enjeu PACA avec la ligne <point> dans l'onglet relevé en plus.
+
+Il faut donc récupérer via le TAXREF présent dans la base données les cd_ref de ces espèces puis chercher dans la source de la flore bibliographique.
+
+Il faut ensuite accorder à chaque polygone du MOS un nombre de point selon si au moins une observation de l'espèce y est trouvée.
+
+On sorte ensuite une carte des points de chaque polygone. On garde uniquement ceux qui ont au moins 4 points
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = TRUE)
+```
+
+# 1. Préambule
+
+Ce document **structure** un flux de travail reproductible pour :
+
+- récupérer les données bibliographiques (GeoPackage) et les couches de référence (MOS ou, à défaut, pédologie) depuis PostgreSQL ;
+- résoudre les noms d'espèces vers leurs `cd_ref` TAXREF ;
+- scorer chaque polygone selon la présence d'au moins une observation d'espèces indicatrices ;
+- produire une carte et des exports des polygones ayant au moins 3 points.
+
+> **Remarque** : ce squelette suppose l'existence d'une fonction `copo()` qui retourne une connexion `DBI` à votre base PostgreSQL.
+
+# 2. Packages et fonctions utilitaires
+
+```{r packages}
+# Packages de base
+suppressPackageStartupMessages({
+  library(openxlsx)
+  library(dplyr)
+  library(readr)
+  library(stringr)
+  library(tidyr)
+  library(DBI)
+  library(sf)
+  library(glue)
+  library(purrr)
+  library(tmap)
+  library(caulisroot)
+  library(knitr)
+  library(scales)      # pour rescale
+  library(RColorBrewer) 
+
+})
+
+con = copo()
+```
+
+# 3. Paramètres de travail et répertoire
+
+```{r workdir}
+workdir <- "G:/Drive partagés/BIODIV/1_CLIENTS/CDC_BIODIVERSITE/2025_cdc_biodiversite/44_cdc_biodiversite_corisperme_2025/CARTO"
+out_dir <- file.path(workdir, "outputs")
+dir.create(out_dir, showWarnings = FALSE, recursive = TRUE)
+
+```
+
+# 4. Données d'entrée
+
+## 4.1 Flore bibliographique (GeoPackage)
+
+```{r biblio}
+
+# Normalise le workdir si tu lances depuis CARTO/outputs
+gpkg_dsn <- normalizePath(file.path(workdir, "biblio_flore.gpkg"), mustWork = TRUE)
+layer_gpkg = "point_silene"
+
+biblio <- sf::st_read(dsn = gpkg_dsn, layer = layer_gpkg, quiet = TRUE)
+
+# CRS cible
+crs_target <- 2154
+if (!is.na(crs_target)) biblio <- sf::st_transform(biblio, crs_target)
+
+# Optionnel : colonne de nom si tu en as besoin plus tard
+name_cols_guess <- intersect(names(biblio),
+  c("nom_sci","scientificName","lb_nom","taxon","NOM_SCIENTIFIQUE","nom_valide"))
+if (!length(name_cols_guess)) message("Aucune colonne 'nom scientifique' standard détectée — OK si inutile.")
+message("Lecture : ", gpkg_dsn, " | couche : ", layer_gpkg)
+
+
+```
+
+## 4.2 Couches de référence (PostgreSQL)
+
+Choix du type d'occupation du sol : grille, mos ou carhab_13, carhab_84 etc...
+
+```{r ref-layers}
+
+## 4.2 Couches de référence (PostgreSQL + zone d'étude) ----
+sf::sf_use_s2(FALSE)
+
+# Choix explicite de la source d'occupation du sol
+type_occsol <- "grille"  # "mos" ou "grille"
+
+# (Optionnel) MOS depuis Postgres si choisi
+if (identical(type_occsol, "mos")) {
+  mos <- dbGetQuery(con, "SELECT * FROM occsol.mos_mamp_2017")
+  mos$geom <- sf::st_as_sfc(mos$geom, EWKB = TRUE)
+  mos <- sf::st_sf(mos, sf_column_name = "geom")
+  if (!is.na(crs_target)) mos <- sf::st_transform(mos, crs_target)
+  mos <- sf::st_make_valid(mos)
+}
+
+# Zone d'étude depuis le GeoPackage 'projet.gpkg'
+projet_gpkg <- normalizePath(file.path(workdir, "projet.gpkg"), mustWork = FALSE)
+zone_etude  <- sf::st_read(projet_gpkg, layer = "zone_etude", quiet = TRUE)
+if (!is.na(crs_target)) zone_etude <- sf::st_transform(zone_etude, crs_target)
+zone_etude <- sf::st_make_valid(zone_etude)
+
+# Tampon de 15 km (métrique) autour de la zone d'étude
+zone_buf15 <- zone_etude |>
+  sf::st_union() |>
+  sf::st_buffer(dist = 15000) |>
+  sf::st_make_valid()
+
+# Construire la couche de référence selon le choix
+if (identical(type_occsol, "mos")) {
+  # Clip MOS par le tampon
+  mos_small <- sf::st_filter(mos, zone_buf15, .predicate = sf::st_intersects)
+  if (nrow(mos_small) == 0) stop("Aucun polygone MOS n'intersecte le tampon 15 km.")
+  ref_poly <- sf::st_intersection(mos_small, sf::st_geometry(zone_buf15)) |> sf::st_make_valid()
+
+} else if (identical(type_occsol, "grille")) {
+  # Grille 100 m (polygones) sur l'emprise du tampon, puis coupe exacte
+  grid_raw  <- sf::st_make_grid(zone_buf15, cellsize = 100, what = "polygons", square = TRUE)
+  grid_sf   <- sf::st_as_sf(grid_raw)                                     # sfc -> sf
+  # Pré-filtrer par intersection, puis découper au bord du tampon
+  grid_in   <- sf::st_filter(grid_sf, zone_buf15, .predicate = sf::st_intersects)
+  if (nrow(grid_in) == 0) stop("La grille ne recouvre pas le tampon 15 km.")
+  ref_poly  <- sf::st_intersection(grid_in, sf::st_geometry(zone_buf15)) |> sf::st_make_valid()
+
+} else {
+  stop("type_occsol doit être 'mos' ou 'grille'.")
+}
+
+```
+
+## 4.3 TAXREF (résolution des cd_ref)
+
+```{r taxref}
+# Listes d'espèces et pondérations
+path_esp = normalizePath(file.path(workdir, "Method_enjeu_PACAv18.0.xlsx"), mustWork = FALSE)
+liste_esp_ponderation = read.xlsx(path_esp, sheet = "Relevé")
+liste_esp_ponderation = liste_esp_ponderation %>% select(CD_NOM,Nom.scientifique,point) %>% arrange(desc(point))
+print(liste_esp_ponderation)
+```
+
+# 5. Préparation des observations bibliographiques
+
+```{r prep-obs}
+## 5. Préparation des observations bibliographiques ----
+
+obs_filt <- biblio %>%
+  mutate(cd_ref = as.integer(cd_ref)) %>%                     # s'assurer du type
+  left_join(liste_esp_ponderation %>% 
+              mutate(cd_ref = as.integer(CD_NOM)), 
+            by = "cd_ref") %>%
+  filter(!is.na(point)) %>%                                  # garder uniquement les espèces d'intérêt
+  st_make_valid() %>%
+  st_transform(st_crs(ref_poly))                              # harmoniser CRS
+
+```
+
+# 6. Jointure spatiale & scoring par polygone
+
+```{r scoring}
+## 6. Jointure spatiale & scoring par polygone ----
+
+# 1) (optionnel selon tes géométries)
+sf::sf_use_s2(FALSE)
+
+# 2) Créer un identifiant sûr et stable pour les polygones
+if (!"poly_id" %in% names(ref_poly)) {
+  ref_poly <- dplyr::mutate(ref_poly, poly_id = dplyr::row_number())
+}
+stopifnot("poly_id" %in% names(ref_poly))
+
+# 3) Ne garder que l'ID + géométrie pour la jointure
+ref_poly_id <- ref_poly["poly_id"]  # garde aussi la géométrie
+
+# 4) Jointure spatiale (points -> polygones)
+pt_in_poly <- sf::st_join(
+  x = obs_filt,
+  y = ref_poly_id,
+  left = TRUE,
+  join = sf::st_intersects
+)
+
+# 5) Vérifications utiles
+if (!"poly_id" %in% names(pt_in_poly)) {
+  stop("Après st_join, la colonne 'poly_id' est absente. Vérifie que ref_poly est bien des polygones.")
+}
+# Combien de points n’appartiennent à aucun polygone ?
+# message("Points hors polygone : ", sum(is.na(pt_in_poly$poly_id)))
+
+# 6) Calcul du score par polygone — étapes simples
+dat <- sf::st_drop_geometry(pt_in_poly)
+dat <- dat[!is.na(dat$poly_id), , drop = FALSE]
+
+# Compter les observations par (poly_id, cd_ref)
+compte <- dplyr::count(dat, poly_id, cd_ref, point, name = "n_obs")
+
+# Points par espèce (présence = au moins 1 obs)
+compte <- dplyr::mutate(compte, point_species = ifelse(n_obs > 0, point, 0L))
+
+# Agrégation au polygone
+score_by_poly <- compte %>%
+  dplyr::group_by(poly_id) %>%
+  dplyr::summarise(
+    n_species_present = dplyr::n_distinct(cd_ref),
+    score_total       = sum(point_species, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+# 7) Joindre le score aux polygones
+ref_scored <- dplyr::left_join(ref_poly, score_by_poly, by = "poly_id") %>%
+  dplyr::mutate(
+    n_species_present = tidyr::replace_na(n_species_present, 0L),
+    score_total       = tidyr::replace_na(score_total, 0L)
+  )
+
+# 8) Sélection (score >= 3)
+ref_selected <- dplyr::filter(ref_scored, score_total >= 4)
+
+```
+
+# 7. Cartographie rapide
+
+```{r map, fig.width=8, fig.height=7}
+tmap_mode("plot")
+
+# 1) NA -> 0 + alpha progressif
+ref_scored$score_display <- ifelse(is.na(ref_scored$score_total), 0, ref_scored$score_total)
+ref_scored$alpha_score <- rescale(ref_scored$score_display, to = c(0.20, 1.0))
+ref_scored$alpha_score[ref_scored$score_display == 0] <- 0.08
+
+# 2) Définir la palette avant usage
+blues_pal <- brewer.pal(9, "Blues") 
+
+# 3) Carte
+map_all <-
+  tm_tiles("OpenStreetMap", alpha = 0.6) +      # fond OSM (v4)
+  tm_shape(ref_scored) +
+  tm_polygons(
+    fill               = "score_display",                           # variable de couleur
+    fill.scale         = tm_scale_continuous(values = blues_pal),   # échelle couleur (v4: fill.scale)
+    fill_alpha         = "alpha_score",                             # variable de transparence
+    fill_alpha.scale   = tm_scale_continuous(),                     # (échelle alpha, optionnel)
+    col                = NA,                                        # pas de contours
+    lwd                = 0,                                         # épaisseur bord = 0
+    fill.legend        = tm_legend(title = "Score"),                # légende couleur (v4: fill.legend)
+    fill_alpha.legend  = tm_legend(show = FALSE)                    # cacher la légende d'alpha (v4: fill_alpha.legend)
+  ) +
+  tm_shape(obs_filt) +
+  tm_dots(size = 0.05, col = "black", fill_alpha = 0.8) +
+  tm_layout(frame = FALSE, legend.show = TRUE)
+
+
+
+
+# Carte filtrée (>=4) avec OSM en fond transparent 60 %
+map_selected <- 
+  tm_shape(ref_selected) +
+  tm_polygons(
+    fill = "score_total",
+    fill.scale  = tm_scale_intervals(breaks = c(4, 6, 10, 20,30)),
+    fill.legend = tm_legend(title = "Score (≥4)"),
+    fill.alpha  = 0.7
+  ) +
+  tm_tiles("OpenStreetMap", alpha = 0.6) +
+  tm_layout(frame = FALSE)
+
+map_selected
+
+
+```
+
+# 8. Exports
+
+```{r export}
+# Répertoire de sortie : 'out_dir' existe déjà plus haut
+# Définir un préfixe si absent
+if (!exists("prefix") || is.null(prefix) || !nzchar(prefix)) {
+  prefix <- "compensation_scoring"
+}
+
+# Chemins de sortie
+gpkg_scored   <- file.path(out_dir, glue("{prefix}_polygones_scored.gpkg"))
+gpkg_selected <- file.path(out_dir, glue("{prefix}_polygones_selected.gpkg"))
+csv_scores    <- file.path(out_dir, glue("{prefix}_scores.csv"))
+png_map_all   <- file.path(out_dir, glue("{prefix}_map_all.png"))
+png_map_sel   <- file.path(out_dir, glue("{prefix}_map_selected.png"))
+
+# Exports GeoPackage
+st_write(ref_scored,   dsn = gpkg_scored,   layer = "polygons_scored",   delete_dsn = TRUE)
+st_write(ref_selected, dsn = gpkg_selected, layer = "polygons_selected", delete_dsn = TRUE)
+
+# Export CSV récapitulatif
+ref_scored %>%
+  st_drop_geometry() %>%
+  write_csv(csv_scores)
+
+# Export des cartes
+tmap::tmap_save(map_all,     filename = png_map_all, width = 2000, height = 1800, units = "px")
+tmap::tmap_save(map_selected, filename = png_map_sel, width = 2000, height = 1800, units = "px")
+
+invisible(NULL)
+
+```
+
+# 9. Contrôles et limites (à modifier)
+
+- Vérifier l'orthographe des espèces (certaines orthographes peuvent ne pas exister dans TAXREF ; corriger si nécessaire).
+- S'assurer que la couche bibliographique contient bien des **points** géolocalisés.
+- Adapter la logique de présence (ici, présence si *au moins une* observation dans le polygone).
+- Si la couche MOS n'est pas disponible, le script bascule automatiquement sur la couche pédologique.*
+
+# 10. Session
+
+```{r session}
+sessionInfo()
