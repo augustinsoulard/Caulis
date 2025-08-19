@@ -18,6 +18,7 @@ library(caulisroot)
 library(tibble)
 library(magick)
 library(stringr)
+library(sf)
 
 
 con = copo()
