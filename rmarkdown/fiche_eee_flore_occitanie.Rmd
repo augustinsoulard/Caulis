@@ -17,13 +17,60 @@ library(tools)
 library(caulisroot)
 library(tibble)
 library(magick)
+library(stringr)
 
 
 con = copo()
 # Charger le tableau de référence
 vw_fiche_eee_flore_occitanie <- dbGetQuery(con, "SELECT * FROM statuts.vw_fiche_eee_flore_occitanie")
+
+
+#############################
+# Choix des espèces d’intérêt
+#############################
+cd_nom_to_sheet = c(92572,117860)
+
 # Filtrer les espèces à mettre en fiche ####
-vw_fiche_eee_flore_occitanie = vw_fiche_eee_flore_occitanie %>% filter(cd_nom %in% c(92572,117860))
+vw_fiche_eee_flore_occitanie = vw_fiche_eee_flore_occitanie %>% filter(cd_nom %in% cd_nom_to_sheet)
+
+
+######################
+# Préparation des cartes
+######################
+donnees_brut_atlas = read_sf("G:/Drive partagés/BIODIV/1_CLIENTS/AGENCE_MTDA/2025/39_PG_BV_LEZ_EEE_2025/CARTO/data_biblio/FloreBibliopoint.gpkg",layer = "flore_comb_ze_statuts")
+
+# Garder un nomvalide par cdrefcalc en gardant celui avec la plus grande chaîne de caractère
+donnees_brut_atlas <- donnees_brut_atlas %>%                  
+  group_by(cdrefcalc) %>%
+  mutate(
+    nomvalide_std = {
+      v <- nomvalide
+      v <- v[!is.na(v)]
+      if (length(v) == 0) NA_character_ else
+        # plus long d'abord, puis ordre alpha pour départager les ex-aequo
+        v[order(-str_length(v), tolower(v))][1]
+    }
+  ) %>%
+  ungroup() %>%
+  mutate(nomvalide = nomvalide_std) %>%
+  select(-nomvalide_std) %>% filter(cdrefcalc %in% cd_nom_to_sheet)
+
+
+atlas_grid = crible_point_to_atlas_grid(donnees_brut_atlas,
+                           lb_nom = nomvalide,dissolve = FALSE,grid_size = 1000)
+
+maps <- atlas_grid_map_for_spsheet(
+  atlas_polys  = atlas_grid,
+  lb_nom       = nomvalide,
+    basemap      = "osm",
+    fill         = "#701700",
+    fill_alpha   = 0.5,
+    border_col   = "#1F0600",
+    border_size  = 0.5,
+    basemap_alpha = 0.7,
+  extent_source = "atlas",   # <- même bbox pour toutes les espèces
+  export       = FALSE
+)
 
 # Création d'un document Word basé sur le modèle fourni. Le modèle
 # "word_styles_references.docx" doit être présent dans le répertoire de travail.
@@ -36,6 +83,7 @@ for (i in seq_len(nrow(vw_fiche_eee_flore_occitanie))) {
     # Ne garder que le texte avant la première virgule
     nom_vern <- sub(",.*", "", row$nom_vern)
     nom_scien = row$nom_valide
+    
     taxref_status = case_when(
   row$fr == "J" ~ "Introduite envahissante",
     row$fr == "I" ~ "Introduite",
@@ -43,8 +91,17 @@ for (i in seq_len(nrow(vw_fiche_eee_flore_occitanie))) {
   row$fr == "E" ~ "Endémique",
   TRUE ~ "Inconnu"  # Cas par défaut
 )
-    rmc = ifelse(is.na(row$rmc_mediterraneen_hors_corse), "", as.character(row$rmc_mediterraneen_hors_corse))
-    invmed = ifelse(is.na(row$invmed_categorie_occ), "", as.character(row$invmed_categorie_occ))
+    rmc = case_when(
+    row$rmc_mediterraneen_hors_corse == "A" ~ "Gestion prioritaire si efficace/faisable (A)",
+    row$rmc_mediterraneen_hors_corse == "B" ~ "Gestion conseillée si efficace/faisable (B)",
+    row$rmc_mediterraneen_hors_corse == "C" ~ "Gestion pertinente si intérêt local démontré sur des sites/espèces à intérêt patrimonial ou sur des sites renaturés (C)",
+    row$rmc_mediterraneen_hors_corse == "E" ~ "Surveillance/veille sur des espèces peu ou pas présentes (E) ",
+    row$rmc_mediterraneen_hors_corse == "E+" ~ "Intervention urgente sur des espèces peu ou pas présentes (E+)",
+  TRUE ~ ""  # Cas par défaut
+)
+    rmc_code = ifelse(is.na( row$rmc_mediterraneen_hors_corse), "", as.character( row$rmc_mediterraneen_hors_corse))
+    	
+  invmed = ifelse(is.na(row$invmed_categorie_occ), "", as.character(row$invmed_categorie_occ))
     title_desc_gen = "Description"
     
     # On met un vide si pas de valeurs
@@ -63,6 +120,20 @@ for (i in seq_len(nrow(vw_fiche_eee_flore_occitanie))) {
 # Définition des couleurs
 #########################
 
+row = row %>%
+  mutate(
+    fill_invmed = case_when(
+      invmed_categorie_occ == "Majeure" ~ "#f0a0a2",
+      invmed_categorie_occ =="Modérée" ~ "#f9f0ae",
+      invmed_categorie_occ =="Emergente" ~ "#f7cbaf",
+      invmed_categorie_occ =="Alerte" ~ "#ffbfee",
+      invmed_categorie_occ =="Prévention" ~ "#cacaca",
+      invmed_categorie_occ =="Non envahissante" ~ "#afe1f4",
+      invmed_categorie_occ =="Non évaluée" ~ "#ffffff",
+     TRUE       ~ "#ffffff"
+    )
+  )
+    
 #########################
 # Lancement du flextable
 #########################
@@ -77,7 +148,7 @@ df <- tibble(
 
 ft <- flextable(df) |>
   merge_v(j = "Groupe") |>
-  valign(j = "Groupe", valign = "middle") |>
+  valign(j = "Groupe", valign = "center") |>
   align(j = c("Groupe","Detail","taxref_status","rmc","invmed"), align = "center",part="all") |>
   set_header_labels(Groupe = "Nom vernaculaire", Detail = "Nom scientifique",
                     taxref_status = "Taxref",
@@ -85,7 +156,7 @@ ft <- flextable(df) |>
                     invmed = "Invmed") |>
   add_header_row(values = c("Nom vernaculaire", "Nom scientifique", "Statuts"),
                  colwidths = c(1, 1, 3)) |>
-  valign(part = "header", valign = "middle") |>
+  valign(part = "header", valign = "center") |>
   theme_booktabs() |>
   autofit()
 
@@ -145,22 +216,23 @@ ft <- bold(ft, i = i_desc_title, j = 1:ncol(df), bold = TRUE,       part = "body
 ft <- bg(  ft, i = i_situ_title, j = 1:ncol(df), bg   = "#C9D6F1", part = "body")
 ft <- bold(ft, i = i_situ_title, j = 1:ncol(df), bold = TRUE,       part = "body")
 
-
-
+# which(df$Groupe == title_desc_gen & df$Detail == title_desc_gen)
+i_invmed = which(df$invmed == invmed)
+ft <- bg(  ft, i = i_invmed, j = "invmed", bg   = row$fill_invmed, part = "body")
 
 # équilibrer visuellement les largeurs (1:3 == 4:5)
 ft <- width(ft, j = 1, width = 1.2)
-ft <- width(ft, j = 2, width = 1.2)
+ft <- width(ft, j = 2, width = 1.4)
 ft <- width(ft, j = 3, width = 1.2)   # 1.2*3 = 3.6
 ft <- width(ft, j = 4, width = 1.8)
-ft <- width(ft, j = 5, width = 1.8)   # 1.8*2 = 3.6
+ft <- width(ft, j = 5, width = 1.2)   # 1.8*2 = 3.6
 
 # Fixer les largeurs
 ft <- set_table_properties(ft, layout = "fixed")
 
 # centrage des cellules visibles (la 1re de chaque bloc)
 ft <- align(ft, i = i_2rows, j = c(1, 4), align = "center", part = "body")
-ft <- valign(ft, i = i_2rows, j = c(1, 4), valign = "middle", part = "body")
+ft <- valign(ft, i = i_2rows, j = c(1, 4), valign = "center", part = "body")
 
 # (facultatif) renforcer la séparation verticale entre les 2 blocs
 sep_bord <- fp_border(color = "#C9D6F1", width = 1)
@@ -196,8 +268,8 @@ if (!is.na(photo_url) && nzchar(photo_url)) {
 
 magick_img = image_read(photo_file)
 info = image_info(magick_img)
-witdth_img = 4.5
-height_img = 4.5 * info$height/info$width
+witdth_img = 4
+height_img = witdth_img * info$height/info$width
 # Insérer les images directement dans les cellules fusionnées : j=1 (bloc gauche), j=4 (bloc droit)
 # Photo (gauche)
 if (nzchar(photo_file) && file.exists(photo_file)) {
@@ -210,39 +282,47 @@ if (nzchar(photo_file) && file.exists(photo_file)) {
                 part = "body")
 }
 
-# Carte (droite)
-if (file.exists(map_file)) {
-  ft <- compose(ft, i = i_photo, j = 4,
-                value = as_paragraph(as_image(map_file, width = 5,height = 3)),
-                part = "body")
-} else {
-  ft <- compose(ft, i = i_photo, j = 4,
-                value = as_paragraph("Carte non disponible"),
-                part = "body")
-}
+#####################
+# Création des cartes
+#####################
+
+map_file = maps$plots[[ nom_scien ]]
+
+if(!exists("map_file", where = globalenv())){
+  # Carte (droite)
+  map_file <- file.path("CARTO", paste0(row$cd_nom, ".jpg"))
+  
+  if (file.exists(map_file)) {
+    ft <- compose(ft, i = i_photo, j = 4,
+                  value = as_paragraph(as_image(map_file, width = 4,height = 3)),
+                  part = "body")
+  } else {
+    ft <- compose(ft, i = i_photo, j = 4,
+                  value = as_paragraph("Carte non disponible"),
+                  part = "body")
+  }
+}else {
+        tmpfile <- tempfile(fileext = ".png")
+        ggsave(tmpfile, plot = map_file, width = 6, height = 5, dpi = 300)
+        
+        ft <- compose(ft, i = i_photo, j = 4,
+                      value = as_paragraph(as_image(tmpfile, width = 3, height = 2.5)),
+                      part = "body")
+  }
+
+
 
 # Hauteur de ligne suffisante pour loger les images
 ft <- height(ft, i = i_photo, height = height_img*1.1, part = "body")
 
 # Légendes dans la ligne suivante, colonne gauche/droite
-carte_legend_text <- "Répartition du taxon – Données SILENE"
+carte_legend_text <- "Répartition du taxon dans le bassin versant du Lez – Données SILENE, Agence MTDA et BIODIV"
 
 ft <- compose(ft, i = i_leg, j = 1, value = as_paragraph(legend), part = "body")
 ft <- compose(ft, i = i_leg, j = 4, value = as_paragraph(carte_legend_text), part = "body")
 
 # Centrage et petite taille de police pour la ligne légendes
 ft <- fontsize(ft, i = i_leg, j = c(1, 4), size = 10, part = "body")
-# 
-# bord_img <- fp_border(color = "#C9D6F1", width = 1)
-# 
-# ft <- border(
-#   ft, i = i_photo, j = 1, part = "body",
-#   border = bord_img  # toutes les faces (top/left/bottom/right)
-# )
-# ft <- border(
-#   ft, i = i_photo, j = 4, part = "body",
-#   border = bord_img
-# )
 
 #########################
 # Gestion des alignements
@@ -251,7 +331,7 @@ ft <- fontsize(ft, i = i_leg, j = c(1, 4), size = 10, part = "body")
 # Centrer TOUT le body et le header
 ft <- align(ft, j = names(df), align = "center", part = "body")
 ft <- align(ft, j = names(df), align = "center", part = "header")
-ft <- valign(ft, j = names(df), valign = "middle", part = "header")
+ft <- valign(ft, j = names(df), valign = "center", part = "header")
 
 # Exceptions : les 2 lignes "texte long" à gauche dans la 1re colonne
 i_desc   <- which(df$Groupe == desc_gen       & df$Detail == desc_gen)
