@@ -7,6 +7,7 @@ output:
     reference_docx: word_styles_references.docx
 ---
 
+# Préparation
 ```{r setup, include=FALSE}
 # Chargement des bibliothèques nécessaires. Si vous ne les avez pas,
 # pensez à les installer avec install.packages() au préalable.
@@ -20,8 +21,9 @@ library(magick)
 library(stringr)
 library(sf)
 
-
+# Connexion à la base de données de l'infini
 con = copo()
+
 # Charger le tableau de référence
 vw_fiche_eee_flore_occitanie <- dbGetQuery(con, "SELECT * FROM statuts.vw_fiche_eee_flore_occitanie")
 
@@ -29,9 +31,10 @@ vw_fiche_eee_flore_occitanie <- dbGetQuery(con, "SELECT * FROM statuts.vw_fiche_
 #############################
 # Choix des espèces d’intérêt
 #############################
-cd_nom_to_sheet = c(92572,117860)
+cd_nom_to_sheet = c(92572,117860,116485,83938,86167,106571,117860,84173,80824)
 
-# Filtrer les espèces à mettre en fiche ####
+
+# Filtrer les espèces à mettre en fiche
 vw_fiche_eee_flore_occitanie = vw_fiche_eee_flore_occitanie %>% filter(cd_nom %in% cd_nom_to_sheet)
 
 
@@ -56,8 +59,19 @@ donnees_brut_atlas <- donnees_brut_atlas %>%
   mutate(nomvalide = nomvalide_std) %>%
   select(-nomvalide_std) %>% filter(cdrefcalc %in% cd_nom_to_sheet)
 
+### Mise en conformité des noms scientifiques
+donnees_brut_atlas$cdrefcalc = as.integer(donnees_brut_atlas$cdrefcalc)
 
-atlas_grid = crible_point_to_atlas_grid(donnees_brut_atlas,
+donnees_atlas_conforme <- donnees_brut_atlas %>%
+  left_join(vw_fiche_eee_flore_occitanie %>% select(cd_nom, nom_valide),
+            by = c("cdrefcalc" = "cd_nom")) %>%
+  mutate(nomvalide = coalesce(nom_valide, nomvalide)) %>%
+  select(-nom_valide)
+
+
+
+
+atlas_grid = crible_point_to_atlas_grid(donnees_atlas_conforme,
                            lb_nom = nomvalide,dissolve = FALSE,grid_size = 1000)
 
 maps <- atlas_grid_map_for_spsheet(
@@ -72,6 +86,21 @@ maps <- atlas_grid_map_for_spsheet(
   extent_source = "atlas",   # <- même bbox pour toutes les espèces
   export       = FALSE
 )
+
+### Floraison
+
+    # Vecteur de correspondance des chiffres aux mois
+      correspondance_mois <- c("Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre")
+      
+      # Fonction pour remplacer un chiffre par un mois
+      remplacer_chiffre_par_mois <- function(chiffre) {
+        chiffres <- as.numeric(unlist(strsplit(chiffre, "-")))
+        mois <- paste(correspondance_mois[chiffres], collapse = "-")
+        return(mois)
+      }
+
+# Appliquer la fonction sur la colonne du dataframe
+      vw_fiche_eee_flore_occitanie$floraison <- sapply(vw_fiche_eee_flore_occitanie$floraison, remplacer_chiffre_par_mois)
 
 # Création d'un document Word basé sur le modèle fourni. Le modèle
 # "word_styles_references.docx" doit être présent dans le répertoire de travail.
@@ -90,7 +119,7 @@ for (i in seq_len(nrow(vw_fiche_eee_flore_occitanie))) {
     row$fr == "I" ~ "Introduite",
   row$fr == "P" ~ "Indigène",
   row$fr == "E" ~ "Endémique",
-  TRUE ~ "Inconnu"  # Cas par défaut
+  TRUE ~ "-"  # Cas par défaut
 )
     rmc = case_when(
     row$rmc_mediterraneen_hors_corse == "A" ~ "Gestion prioritaire si efficace/faisable (A)",
@@ -98,19 +127,26 @@ for (i in seq_len(nrow(vw_fiche_eee_flore_occitanie))) {
     row$rmc_mediterraneen_hors_corse == "C" ~ "Gestion pertinente si intérêt local démontré sur des sites/espèces à intérêt patrimonial ou sur des sites renaturés (C)",
     row$rmc_mediterraneen_hors_corse == "E" ~ "Surveillance/veille sur des espèces peu ou pas présentes (E) ",
     row$rmc_mediterraneen_hors_corse == "E+" ~ "Intervention urgente sur des espèces peu ou pas présentes (E+)",
-  TRUE ~ ""  # Cas par défaut
+  TRUE ~ "-"  # Cas par défaut
 )
-    rmc_code = ifelse(is.na( row$rmc_mediterraneen_hors_corse), "", as.character( row$rmc_mediterraneen_hors_corse))
+    rmc_code = ifelse(is.na(row$rmc_mediterraneen_hors_corse)||row$rmc_mediterraneen_hors_corse=="", "-", as.character( row$rmc_mediterraneen_hors_corse))
     	
-  invmed = ifelse(is.na(row$invmed_categorie_occ), "", as.character(row$invmed_categorie_occ))
+  invmed = ifelse(is.na(row$invmed_categorie_occ), "-", as.character(row$invmed_categorie_occ))
     title_desc_gen = "Description"
     
     # On met un vide si pas de valeurs
-    desc_gen <- ifelse(is.na(row$dscpt_esp), "", row$dscpt_esp)
-    dscpt_risque_eee  <- ifelse(is.na(row$dscpt_risque_eee), "", row$dscpt_risque_eee)
+    desc_gen = ifelse(is.na(row$dscpt_esp), "", row$dscpt_esp)
+    dscpt_risque_eee  = ifelse(is.na(row$dscpt_risque_eee), "", row$dscpt_risque_eee)
+    
+    dscpt_habitats_esp  = ifelse(is.na(row$dscpt_habitats_esp), "", row$dscpt_habitats_esp)
+    
+    floraison = ifelse(is.na(row$floraison), "-", row$floraison)
+   
     # AJout des risques à description générale
     desc_gen = paste0("Description générale : ",desc_gen,"  \n",
-                      "Risques : ",dscpt_risque_eee)
+                      "Risques : ",dscpt_risque_eee,"  \n",
+                      "Habitats : ",dscpt_habitats_esp,"  \n",
+                      "Floraison : ",floraison)
     title_situation = "Situation au sein du bassin versant du Lez"
     
     # Legende de la photo
@@ -269,7 +305,7 @@ if (!is.na(photo_url) && nzchar(photo_url)) {
 
 magick_img = image_read(photo_file)
 info = image_info(magick_img)
-witdth_img = 4
+witdth_img = 3.5
 height_img = witdth_img * info$height/info$width
 # Insérer les images directement dans les cellules fusionnées : j=1 (bloc gauche), j=4 (bloc droit)
 # Photo (gauche)
@@ -335,11 +371,26 @@ ft <- align(ft, j = names(df), align = "center", part = "header")
 ft <- valign(ft, j = names(df), valign = "center", part = "header")
 
 # Exceptions : les 2 lignes "texte long" à gauche dans la 1re colonne
+
 i_desc   <- which(df$Groupe == desc_gen       & df$Detail == desc_gen)
 i_situ   <- which(df$Groupe == "Situation"    & df$Detail == "Situation")
 
+
 ft <- align(ft, i = i_desc, j = 1, align = "left", part = "body")
 ft <- align(ft, i = i_situ, j = 1, align = "left", part = "body")
+
+lbl <- fp_text(bold = TRUE)  # style gras
+
+ft <- compose(
+  ft, i = i_desc, j = 1,
+  value = as_paragraph(
+    as_chunk("Description : ", props = lbl), as_chunk(desc_general), as_chunk("\n"),
+    as_chunk("Risques : ", props = lbl),     as_chunk(dscpt_risque_eee), as_chunk("\n"),
+    as_chunk("Habitats : ", props = lbl),    as_chunk(dscpt_habitats_esp), as_chunk("\n"),
+    as_chunk("Floraison : ", props = lbl),   as_chunk(floraison)
+  ),
+  part = "body"
+)
 
 #########################
 # Gestion du style global
@@ -373,6 +424,11 @@ ft <- border(
   border.left = bord_titre, border.right = bord_titre
 )
 
+######################
+# Affichage Rmarkdown
+######################
+
+ft
 
 #############################
 # Génération du document Word
@@ -381,15 +437,15 @@ ft <- border(
 doc <- body_add_flextable(doc, ft)
 
 # (facultatif) les sections texte :
-doc <- body_add_par(doc, "", style = "Normal")
-doc <- body_add_par(doc, "Description générale", style = "heading 3")
-doc <- body_add_par(doc, desc_general, style = "Normal")
-doc <- body_add_par(doc, "", style = "Normal")
-doc <- body_add_par(doc, "Risques", style = "heading 3")
-doc <- body_add_par(doc, desc_risque, style = "Normal")
-doc <- body_add_par(doc, "", style = "Normal")
-doc <- body_add_par(doc, "Situation vis-à-vis du projet", style = "heading 3")
-doc <- body_add_par(doc, "", style = "Normal")
+# doc <- body_add_par(doc, "", style = "Normal")
+# doc <- body_add_par(doc, "Description générale", style = "heading 3")
+# doc <- body_add_par(doc, desc_general, style = "Normal")
+# doc <- body_add_par(doc, "", style = "Normal")
+# doc <- body_add_par(doc, "Risques", style = "heading 3")
+# doc <- body_add_par(doc, desc_risque, style = "Normal")
+# doc <- body_add_par(doc, "", style = "Normal")
+# doc <- body_add_par(doc, "Situation vis-à-vis du projet", style = "heading 3")
+# doc <- body_add_par(doc, "", style = "Normal")
   # Ajout d'un saut de page sauf pour la dernière fiche
 if (i < nrow(vw_fiche_eee_flore_occitanie)) doc <- body_add_break(doc)
 
@@ -398,6 +454,6 @@ if (i < nrow(vw_fiche_eee_flore_occitanie)) doc <- body_add_break(doc)
 # Export du document Word final. Il sera enregistré dans le dossier de travail
 # sous le nom indiqué ci‑dessous.
 dbDisconnect(con) 
-print(doc, target = "fiches_eee_flore_occitanie.docx")
+print(doc, target = "fiches_eee_flore_occitanie_officer.docx")
 
 ```
