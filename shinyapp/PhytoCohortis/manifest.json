@@ -149,43 +149,6 @@
         "Built": "R 4.5.0; ; 2025-04-08 00:42:19 UTC; windows"
       }
     },
-    "RInno": {
-      "Source": "github",
-      "Repository": null,
-      "description": {
-        "Package": "RInno",
-        "Type": "Package",
-        "OS_type": "windows",
-        "Title": "An Installation Framework for Shiny Apps",
-        "Version": "1.0.1",
-        "Authors@R": "c(\n  person(\"Jon\", \"Hill\", email = \"jon.mark.hill@gmail.com\", role = c(\"aut\", \"cre\", \"cph\")),\n  person(\"W. Lee\", \"Pang\", role = c(\"aut\", \"cph\"), comment = \"DesktopDeployR project at https://github.com/wleepang/DesktopDeployR\"),\n  person(\"Hanjo\", \"Odendaal\", email = \"hanjo.oden@gmail.com\", role = \"ctb\"),\n  person(\"William\", \"Bradley\", email = \"bradley@ficonsulting.com\", role = \"ctb\"),\n  person(\"Brent (Tom)\", \"Bailey\", email = \"bailey@ficonsulting.com\", role = \"ctb\"),\n  person(\"Mikolaj\", \"Rybinski\", email = \"mikolaj.rybinski@id.ethz.ch\", role = \"ctb\"),\n  person(\"Chase\", \"Clark\", email = \"chasec288@gmail.com\", role = \"ctb\"),\n  person(\"Damien\", \"Soukhavong\", email = \"damien.soukhavong@skema.edu\", role = \"ctb\"),\n  person(\"Jonathan\", \"Godfrey\", email = \"a.j.godfrey@massey.ac.nz\", role = \"ctb\", comment = \"https://github.com/ajrgodfrey\"),\n  person(\"Gábor\", \"Csárdi\", email = \"csardi.gabor@gmail.com\", role = c(\"aut\")),\n  person(\"Hadley\", \"Wickham\", role = c(\"aut\")),\n  person(\"Winston\", \"Chang\", role = \"aut\"),\n  person(\"Jim\", \"Hester\", role = \"aut\"),\n  person(\"RStudio\", role = \"cph\"),\n  person(\"Martin\", \"Morgan\", role = \"aut\"),\n  person(\"Dan\", \"Tenenbaum\", role = \"aut\"),\n  person(\"Mango Solutions\", role = \"cph\")\n  )",
-        "Maintainer": "ORPHANED",
-        "URL": "https://ficonsulting.github.io/RInno/",
-        "BugReports": "https://github.com/ficonsulting/RInno/issues",
-        "Description": "Installs shiny apps packaged as stand-alone Electron apps using Inno Setup, an open source software that builds installers for Windows programs <http://www.jrsoftware.org/ishelp/>.",
-        "License": "GPL-3 | file LICENSE",
-        "Encoding": "UTF-8",
-        "Depends": "R (>= 3.3.0)",
-        "Imports": "curl, glue (>= 1.2.0), httr, installr, jsonlite, magrittr,\nmethods, pkgbuild, remotes, rmarkdown, shiny, stringr , utils",
-        "Suggests": "knitr, stringi, covr, testthat",
-        "VignetteBuilder": "knitr",
-        "RoxygenNote": "6.1.1",
-        "RemoteType": "github",
-        "RemoteHost": "api.github.com",
-        "RemoteRepo": "RInno",
-        "RemoteUsername": "ficonsulting",
-        "RemoteRef": "HEAD",
-        "RemoteSha": "db185333e49d59495665bf104bc7c46d1c7671d8",
-        "GithubRepo": "RInno",
-        "GithubUsername": "ficonsulting",
-        "GithubRef": "HEAD",
-        "GithubSHA1": "db185333e49d59495665bf104bc7c46d1c7671d8",
-        "NeedsCompilation": "no",
-        "Packaged": "2025-08-04 06:42:11 UTC; augus",
-        "Author": "Jon Hill [aut, cre, cph],\n  W. Lee Pang [aut, cph] (DesktopDeployR project at\n    https://github.com/wleepang/DesktopDeployR),\n  Hanjo Odendaal [ctb],\n  William Bradley [ctb],\n  Brent (Tom) Bailey [ctb],\n  Mikolaj Rybinski [ctb],\n  Chase Clark [ctb],\n  Damien Soukhavong [ctb],\n  Jonathan Godfrey [ctb] (https://github.com/ajrgodfrey),\n  Gábor Csárdi [aut],\n  Hadley Wickham [aut],\n  Winston Chang [aut],\n  Jim Hester [aut],\n  RStudio [cph],\n  Martin Morgan [aut],\n  Dan Tenenbaum [aut],\n  Mango Solutions [cph]",
-        "Built": "R 4.5.1; ; 2025-08-04 06:42:13 UTC; windows"
-      }
-    },
     "Rcpp": {
       "Source": "CRAN",
       "Repository": "https://cran.rstudio.com",
@@ -2498,23 +2461,8 @@
     }
   },
   "files": {
-    "app - Copie.R": {
-      "checksum": "c2d1277faca552db0f9e30821ca4fcfa"
-    },
     "app.R": {
       "checksum": "c948dde7044f608027cd200a01ef16eb"
-    },
-    "appcreation.R": {
-      "checksum": "97e282696184eef2055996c5c9909d7c"
-    },
-    "bibliographie.txt": {
-      "checksum": "3a914ea75e52815b44d94ed4519afc9d"
-    },
-    "data_releve_type.csv": {
-      "checksum": "0bb2750a4e0eb9c92a94c5af2c8d3f8e"
-    },
-    "phytocohortis.ico": {
-      "checksum": "ae93fc67b49cae399394d23a6d9bc18a"
     }
   },
   "users": null
