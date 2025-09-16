@@ -7,6 +7,10 @@ output:
     reference_docx: word_styles_references.docx
 ---
 
+Pour l'instant il reste tout à faire. J'ai juste repris le code des grosses fiches.
+Peut-être ajouter la zone d'étude et faire en sorte que la carte zoom sur la zone d'étude. Il faut donc modifier la fonction de génération de cartes.
+-----------------------------------------------------------------------
+
 # Préparation
 ```{r setup, include=FALSE}
 # Chargement des bibliothèques nécessaires. Si vous ne les avez pas,
@@ -41,7 +45,7 @@ vw_fiche_eee_flore_occitanie = vw_fiche_eee_flore_occitanie %>% filter(cd_nom %i
 ######################
 # Préparation des cartes
 ######################
-donnees_brut_atlas = read_sf("G:/Drive partagés/BIODIV/1_CLIENTS/AGENCE_MTDA/2025/39_PG_BV_LEZ_EEE_2025/CARTO/data_biblio/FLORExZE.gpkg",layer = "FLORExZE_bv_zh")
+donnees_brut_atlas = read_sf("G:/Drive partagés/BIODIV/1_CLIENTS/AGENCE_MTDA/2025/39_PG_BV_LEZ_EEE_2025/CARTO/data_biblio/FloreBibliopoint.gpkg",layer = "flore_comb_ze_statuts")
 
 # Garder un nomvalide par cdrefcalc en gardant celui avec la plus grande chaîne de caractère
 donnees_brut_atlas <- donnees_brut_atlas %>%                  

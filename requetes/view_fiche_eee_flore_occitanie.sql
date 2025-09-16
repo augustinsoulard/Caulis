@@ -58,3 +58,60 @@ LEFT JOIN statuts.dscpt_risque_eee t3 USING (cd_nom)
 LEFT JOIN invmed USING (cd_nom)
 LEFT JOIN public.taxrefv18 tax ON bp.cd_nom = tax."cd_nom"
 LEFT JOIN public.baseflor_bryo_taxref bf ON tax."cd_ref" = bf."cd_ref";
+
+-- Vue allégées en critère et enrichie en espèces
+-------------------------------------------------------
+
+CREATE OR REPLACE VIEW statuts.vw_liste_eee_invmed_enrichie AS
+SELECT
+  -- Clés et infos INVMED/RMC
+  l.cd_ref                              AS cd_ref_taxref,
+  t.cd_nom                              AS cd_nom,   -- ligne acceptée TAXREF
+  l.invmed_categorie_occ,
+  l.invmed_origine,
+  l.invmed_milieux,
+  l.invmed_date_intro,
+  l.rmc_mediterraneen_hors_corse,
+
+  -- Descriptions internes
+  t1.description_generale               AS dscpt_esp,
+  t2.description_habitats               AS dscpt_habitats_esp,
+  t3.risques                            AS dscpt_risque_eee,
+
+  -- Champs TAXREF utiles
+  t.nom_valide,
+  t.nom_vern,
+  t.famille,
+  t.fr,
+
+  -- Baseflor/Bryo
+  bf."TYPE_BIOLOGIQUE",
+  bf."CARACTERISATION_ECOLOGIQUE_(HABITAT_OPTIMAL)",
+  bf.floraison,
+  bf."Lumière",
+  bf."Température",
+  bf."Continentalité",
+  bf."Humidité_atmosphérique",
+  bf."Humidité_édaphique",
+  bf."Réaction_du_sol_(pH)",
+  bf."Niveau_trophique",
+  bf."Salinité",
+  bf."Texture",
+  bf."Matière_organique",
+  bf."Nutrients"
+FROM statuts.liste_eee_occitanie_invmed_rmc l
+LEFT JOIN taxrefv18 t
+  ON t.cd_ref = l.cd_ref
+ AND t.cd_nom = t.cd_ref            -- on force la ligne acceptée
+LEFT JOIN statuts.dscpt_esp t1
+  ON t1.cd_nom = t.cd_nom
+LEFT JOIN statuts.dscpt_habitats_esp t2
+  ON t2.cd_nom = t.cd_nom
+LEFT JOIN statuts.dscpt_risque_eee t3
+  ON t3.cd_nom = t.cd_nom
+LEFT JOIN baseflor_bryo_taxref bf
+  ON bf.cd_ref = t.cd_ref;
+
+
+
+
