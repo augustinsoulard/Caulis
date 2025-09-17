@@ -1,0 +1,1 @@
+# Ce code pourra être lancé en parallèle du Rshiny pour vérifier que les bouts de scripts fonctionnent bien
