@@ -37,7 +37,7 @@ corresp_inat_taxref$code_taxa_entree = as.character(corresp_inat_taxref$code_tax
 
 inat_to_add = left_join(obs,corresp_inat_taxref,by=c("taxon_id"="code_taxa_entree")) %>% 
                             select(CD_REF = cd_ref,
-                                      nom = scientific_name,                                                                   
+                                      nom = lb_nom_valide,                                                                   
                                       observateur=user_name,
                                       date = observed_on,
                                       heure = time_observed_at,
