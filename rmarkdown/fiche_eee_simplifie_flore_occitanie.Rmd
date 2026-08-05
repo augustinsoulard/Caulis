@@ -1,5 +1,5 @@
 ---
-title: "Fiches espèces EEE – Bassin versant du Lez"
+title: "Fiches espèces EEE – Rochefort-du-Gard"
 author: "Augustin Soulard"
 date: "`r Sys.Date()`"
 output:
@@ -35,7 +35,8 @@ vw_fiche_eee_flore_occitanie <- dbGetQuery(con, "SELECT * FROM statuts.vw_fiche_
 #############################
 # Choix des espèces d’intérêt
 #############################
-cd_nom_to_sheet = c(92572,117860,116485,83938,86167,106571,117860,84173,80824)
+cd_nom_to_sheet = c(80824,93129,111863,128956,116485)
+
 
 
 # Filtrer les espèces à mettre en fiche
