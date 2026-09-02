@@ -84,24 +84,7 @@ findtaxa <- function(listetaxa,
 }
 
 
-majuscule_hors_premier_mot <- function(chaine) {
-  # Si " x " est présent, on ne modifie rien
-  if (grepl(" x ", chaine)) {
-    return(chaine)
-  }
-  
-  # Sinon, on garde le premier mot, puis on enlève les suivants s'ils commencent par une majuscule
-  mots <- unlist(strsplit(chaine, " "))
-  if (length(mots) <= 1) return(chaine)
-  
-  premier <- mots[1]
-  reste <- mots[-1]
-  
-  # Supprime les mots en majuscule dans le reste
-  reste_filtré <- reste[!grepl("^[A-Z]", reste)]
-  
-  return(paste(c(premier, reste_filtré), collapse = " "))
-}
+
 
 ############################################################   find_taxaref 
 # Réalise un match entre 2 référentiels taxonomiques
