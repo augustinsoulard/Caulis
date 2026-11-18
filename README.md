@@ -47,7 +47,7 @@ Lecture dans le code : `caulis_env("CAULIS_RENVIRON")` (avec valeur par défaut 
 
 ## Outils projet (hors build du package)
 
-Le dépôt contient aussi, exclus du package via `.Rbuildignore` : `script/` (scripts d'analyse), `requetes/` (SQL), `rmarkdown/` (rapports), `style/` (styles QGIS/SLD), `data/` (jeux de données), `doc/`, `ai/`, `modeleur/`.
+Le dépôt contient aussi, exclus du package via `.Rbuildignore` : `script/` (scripts d'analyse), `rmarkdown/` (rapports), `style/` (styles QGIS/SLD), `data/` (jeux de données). Les dossiers `doc/`, `modeleur/`, `requetes/` (SQL) et `ai/` restent en local uniquement (voir `.gitignore`).
 
 ## Développement
 

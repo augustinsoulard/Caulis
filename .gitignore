@@ -26,3 +26,8 @@ renv/python/
 
 # Outils perso IA (hors package, hors dépôt) — la clé API reste en variable d'env
 ai/
+
+# Dossiers locaux non transmis au dépôt
+doc/
+modeleur/
+requetes/
