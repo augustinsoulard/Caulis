@@ -1,5 +1,5 @@
-if (file.exists("caulisroot/DESCRIPTION")) {
-  devtools::load_all("caulisroot")
+if (requireNamespace("caulis", quietly = TRUE)) {
+  library("caulis")
 }
 
 con = copo()

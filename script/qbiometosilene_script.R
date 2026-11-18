@@ -3,6 +3,9 @@
 library(caulisroot)
 library(sf)
 library(openxlsx)
+source("R/qbiometosilene.R")
+source("R/scrap_data_inat.R")
+
 
 # Chargement du standard de données
 con = copo()
@@ -13,7 +16,7 @@ standard_silene <-   dbGetQuery(con, "SELECT * FROM donnees.standard_donnees_sil
 standard_final = qbiometosilene(
   donnees_path = file.choose(),
   standard_silene = dbGetQuery(con, "SELECT * FROM donnees.standard_donnees_silene"),
-  structure = "BIODIV",
+  structure = "SLP",
   origine = "Pu", # Pr ou Pu
   diffusion = 5, # 1 un5 selon ouverture des données
   type_loc = "précis",

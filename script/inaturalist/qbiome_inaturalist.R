@@ -1,15 +1,15 @@
 if(!require("sf")){install.packages("sf")} ; library("sf")
 if(!require("tidyverse")){install.packages("tidyverse")} ; library("tidyverse")
-source("function/postgres/postgres_manip.R")
+source("R/postgres/postgres_manip.R")
 library(caulisroot)
 
 con = copo() # Connexion à la bdd
 # Lecture des observation via INaturalist ou un fichier téléchargé ####
-obs = inat_from_polygon(requete = "SELECT * FROM projet.zone_etude WHERE code IN (19);",
-                        year = NULL,
-                        maxresult = 10)
+# obs = inat_from_polygon(requete = "SELECT * FROM projet.zone_etude WHERE code IN (19);",
+#                        year = NULL,
+#                        maxresult = 10)
 
-obs = read.csv(choose.files())
+obs = read.csv(rstudioapi::selectFile())
 
 
 head(obs)
@@ -28,7 +28,7 @@ obs$longitude <- ifelse(obs$coordinates_obscured %in% c("true", TRUE),
                        obs$longitude)
 # Lecture de la BDD ####
 
-flore_db <- st_read(con, query = "SELECT * FROM donnees.flore")
+flore_db <- st_read(con, query = "SELECT * FROM donnees.qbiome_flore")
 corresp_inat_taxref = dbGetQuery(con, "SELECT * FROM inaturalist.corresp_taxref")
 
 # Jointure et récupération des champs intéressant ####
@@ -58,7 +58,8 @@ inat_to_add <- inat_to_add %>%
   ))
 # Convertire les dates
 inat_to_add$date <- as.Date(inat_to_add$date)
-inat_to_add$heure <- as.POSIXct(inat_to_add$heure)
+inat_to_add$heure <- as.POSIXct(inat_to_add$heure, format="%Y-%m-%d %H:%M:%S", tz="UTC")
+if(sum(is.na(inat_to_add$heure))>0){cat('Introduction de NA dans les heures')}
 
 # Définition ed l'origine
 inat_to_add$origine = "INaturalist"

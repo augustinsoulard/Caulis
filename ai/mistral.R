@@ -1,5 +1,5 @@
 # Le chargement du fichier .Renviron et de la librairie reste identique
-chemin_renviron <- "G:/Mon Drive/Administratif/hz/.Renviron"
+chemin_renviron <- "D:/NextCloud/Documents/A_PERSO/Administratif/hz/.Renviron"
 if (!readRenviron(chemin_renviron)) {
   stop("Le fichier .Renviron n'a pas pu être chargé. Vérifiez le chemin : ", chemin_renviron)
 }

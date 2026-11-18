@@ -1,1 +1,0 @@
-devtools::install("D:\\Github\\caulisroot", force = TRUE)

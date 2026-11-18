@@ -1,3 +1,49 @@
 # Caulis
-Il s'agit d'un environnement de travail pour les écologues botanistes.  
-Caulis veut dire la tige en latin. Il s'agit de l'architecture de base pour le travail de botaniste. Il offre des données et des outils structurants auxquels se rajoute l'expertise naturaliste.
+
+Caulis (la tige, en latin) est l'architecture de travail R pour les écologues botanistes : des données et des outils structurants auxquels se rajoute l'expertise naturaliste.
+
+## Installation du package
+
+```r
+# Depuis GitHub
+devtools::install_github("augustinsoulard/Caulis")
+
+# En local (clone du dépôt)
+devtools::install("D:/Github/Caulis")
+```
+
+```r
+library(caulis)
+```
+
+## Contenu du package (dossier `R/`)
+
+- **Connexion & PostgreSQL/PostGIS** : `copo()`, `write_to_schema()`, `insert_on_conflict()`, `inat_from_polygon()`
+- **Taxonomie / TAXREF** : `find_taxaref()`, `findtaxa()`, `updatetaxa()`, `majuscule_hors_premier_mot()`, `trigrammisation()`
+- **iNaturalist** : `scrap_data_inat()`
+- **SIG & cartographie** : `charger_gpkg()`, `crible_point_to_atlas_grid()`, `atlas_grid_map_for_spsheet()`, `qbiometosilene()`
+- **Habitats EUNIS/HIC** : `hablegendation()`, `left_until_dash()`, `right_after_dash()`, `rarete_occurence()`, `taxon_hab()`, `find_taxon_hab()`, `hab_join()`, `hab_match()`
+- **Phytosociologie** : `contingentation()`
+- **Divers** : `load_data()`
+
+## Secrets et accès
+
+Aucun identifiant n'est stocké dans le dépôt. Les accès (PostgreSQL, API) sont lus via des variables d'environnement définies dans un fichier `.Renviron` **externe** (ex. `D:/NextCloud/Documents/A_PERSO/Administratif/hz/.Renviron`), jamais committé (voir `.gitignore`).
+
+## Outils projet (hors build du package)
+
+Le dépôt contient aussi, exclus du package via `.Rbuildignore` : `script/` (scripts d'analyse), `requetes/` (SQL), `rmarkdown/` (rapports), `style/` (styles QGIS/SLD), `data/` (jeux de données), `doc/`, `ai/`, `modeleur/`.
+
+## Développement
+
+```r
+devtools::load_all(".")   # charger le package en dev
+devtools::document(".")   # régénérer NAMESPACE + man/
+devtools::check(".")      # R CMD check
+```
+
+Voir aussi `dev/maj_caulis.R`.
+
+## Historique
+
+Ancien package `caulisroot` (archivé sur GitHub) fusionné dans `caulis` à partir de la v0.10.0.

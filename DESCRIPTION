@@ -1,0 +1,33 @@
+Package: caulis
+Type: Package
+Title: Environnement de travail R pour écologues botanistes
+Version: 0.10.0
+Authors@R: person("Augustin", "Soulard", email = "augustin.soulard@synetea.fr", role = c("aut", "cre"))
+Description: Caulis (la tige, en latin) est l'architecture de base pour le travail de botaniste. Le package fournit des outils de gestion et d'analyse de données écologiques et phytosociologiques : connexion PostgreSQL/PostGIS, correspondances TAXREF, import iNaturalist, habitats EUNIS/HIC, cartographie d'atlas, génération de rapports. Le dépôt contient également les outils projet (scripts, requêtes SQL, R Markdown, styles QGIS) exclus du build du package via .Rbuildignore.
+Encoding: UTF-8
+License: CC-BY-4.0 + file LICENSE
+RoxygenNote: 7.3.2
+Imports:
+    DBI,
+    RPostgres,
+    dplyr,
+    tidyr,
+    stringr,
+    rlang,
+    ggplot2,
+    ggspatial,
+    sf,
+    leaflet,
+    rinat,
+    glue,
+    reshape2,
+    stats,
+    utils
+Suggests:
+    readxl,
+    readODS,
+    knitr,
+    rmarkdown,
+    prettymapr,
+    rosm,
+    tcltk

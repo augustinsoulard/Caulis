@@ -4,10 +4,22 @@
 .RData
 .Ruserdata
 .Renviron
+.env
+*.env
 .Rprofile
+
+# Secrets et environnements (ne jamais committer)
+.Renviron
+*.pem
+*.key
 
 # Temp & système
 *.tmp
 *.bak
 .DS_Store
 Thumbs.db
+
+# renv
+renv/library/
+renv/staging/
+renv/python/
