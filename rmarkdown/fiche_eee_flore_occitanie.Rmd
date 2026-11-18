@@ -15,7 +15,7 @@ library(officer)
 library(flextable)
 library(dplyr)
 library(tools)
-library(caulisroot)
+library(caulis)
 library(tibble)
 library(magick)
 library(stringr)
@@ -41,7 +41,7 @@ vw_fiche_eee_flore_occitanie = vw_fiche_eee_flore_occitanie %>% filter(cd_nom %i
 ######################
 # Préparation des cartes
 ######################
-donnees_brut_atlas = read_sf("G:/Drive partagés/BIODIV/1_CLIENTS/AGENCE_MTDA/2025/39_PG_BV_LEZ_EEE_2025/CARTO/data_biblio/FLORExZE.gpkg",layer = "FLORExZE_bv_zh")
+donnees_brut_atlas = read_sf(file.path(Sys.getenv("CAULIS_DRIVE_PARTAGE"), "BIODIV/1_CLIENTS/AGENCE_MTDA/2025/39_PG_BV_LEZ_EEE_2025/CARTO/data_biblio/FLORExZE.gpkg"),layer = "FLORExZE_bv_zh")
 
 # Garder un nomvalide par cdrefcalc en gardant celui avec la plus grande chaîne de caractère
 donnees_brut_atlas <- donnees_brut_atlas %>%                  

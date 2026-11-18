@@ -1,8 +1,7 @@
 # Charger les bibliotheques necessaires
 if(!require("readxl")){install.packages("readxl")} ; library("readxl")
 if(!require("tidyverse")){install.packages("tidyverse")} ; library("tidyverse")
-source("function/taxabase.R")
-source("function/habref_function.R")
+library(caulis)
 
 
 # Appel de la fonction avec l'exemple "Que ile"

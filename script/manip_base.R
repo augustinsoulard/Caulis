@@ -15,7 +15,7 @@ devtools::build()     # pour construire le package
 devtools::load_all()
 
 
-# usethis::create_package("C:/Users/augus/AppData/Local/R/win-library/4.4/caulisroot")
+# usethis::create_package()  # le package s'appelle désormais "caulis" (à la racine du dépôt)
 
 
 
@@ -38,7 +38,7 @@ renv::snapshot()
 devtools::clean_dll()  # Nettoie les DLLs compilées
 devtools::clean_vignettes()  # Nettoie les vignettes
 devtools::clean_source_pkg()  # Nettoie les sources
-remove.packages("caulisroot")
+# remove.packages("caulis")  # ancien nom : caulisroot
 
 
 

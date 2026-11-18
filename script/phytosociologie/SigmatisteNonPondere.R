@@ -13,8 +13,7 @@ if(!require("foreign")){install.packages("foreign")} ; library("foreign") # Pour
 if(!require("RVAideMemoire")){install.packages("RVAideMemoire")} ; library("RVAideMemoire")
 if(!require("vegan")){install.packages("vegan")} ; library("vegan")
 if(!require("reshape2")){install.packages("reshape2")} ; library("reshape2")
-source("function/taxabase.R")
-source("function/habref_function.R")
+library(caulis)
 
 #Chargement des données depuis Biodivercity
 flore = dbGetQuery(con, "SELECT * FROM donnees.flore

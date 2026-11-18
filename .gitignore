@@ -23,3 +23,6 @@ Thumbs.db
 renv/library/
 renv/staging/
 renv/python/
+
+# Outils perso IA (hors package, hors dépôt) — la clé API reste en variable d'env
+ai/

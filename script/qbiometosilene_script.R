@@ -1,10 +1,8 @@
 
 # libraries
-library(caulisroot)
+library(caulis)
 library(sf)
 library(openxlsx)
-source("R/qbiometosilene.R")
-source("R/scrap_data_inat.R")
 
 
 # Chargement du standard de données

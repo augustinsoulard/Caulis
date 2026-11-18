@@ -1,10 +1,9 @@
-if(!require("caulisroot")){install.packages("caulisroot")} ; library("caulisroot")
+library(caulis)
 
 # Charger les bibliotheques necessaires
 if(!require("readxl")){install.packages("readxl")} ; library("readxl")
 if(!require("tidyverse")){install.packages("tidyverse")} ; library("tidyverse")
-source("function/taxabase.R")
-source("function/postgres/postgres_manip.R")
+
 
 con = copo()
 

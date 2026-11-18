@@ -9,7 +9,7 @@ Caulis (la tige, en latin) est l'architecture de travail R pour les écologues b
 devtools::install_github("augustinsoulard/Caulis")
 
 # En local (clone du dépôt)
-devtools::install("D:/Github/Caulis")
+devtools::install("chemin/vers/Caulis")
 ```
 
 ```r
@@ -26,9 +26,24 @@ library(caulis)
 - **Phytosociologie** : `contingentation()`
 - **Divers** : `load_data()`
 
-## Secrets et accès
+## Configuration locale : le fichier `.env`
 
-Aucun identifiant n'est stocké dans le dépôt. Les accès (PostgreSQL, API) sont lus via des variables d'environnement définies dans un fichier `.Renviron` **externe** (ex. `D:/NextCloud/Documents/A_PERSO/Administratif/hz/.Renviron`), jamais committé (voir `.gitignore`).
+Tous les chemins machine (fichier des secrets, exiftool, dossiers de données externes) sont lus via des **variables d'environnement** définies dans un fichier `.env` à la racine du projet :
+
+- `.env` : vos valeurs réelles — **jamais committé** (dans `.gitignore`)
+- `.env.example` : le modèle à copier, committé
+
+Le package charge automatiquement le `.env` à son chargement (`charger_env()` dans `R/env.R`). Clés utilisées :
+
+| Variable | Rôle | Exemple |
+|---|---|---|
+| `CAULIS_RENVIRON` | Fichier des **secrets** (PGUSER, PGPASSWORD, clés API) — externe au dépôt | `D:/NextCloud/Documents/A_PERSO/Administratif/hz/.Renviron` |
+| `CAULIS_EXIFTOOL` | Chemin de `exiftool.exe` | `D:/Logiciel/ExifTool/exiftool.exe` |
+| `CAULIS_DRIVE_PARTAGE` | Racine du Drive partagé (données clients) | `G:/Drive partagés` |
+| `CAULIS_TEMP` | Dossier temporaire | `D:/TEMP` |
+| `CAULIS_DATA_DIR` | Racine des données du projet (défaut `data`) | `data` |
+
+Lecture dans le code : `caulis_env("CAULIS_RENVIRON")` (avec valeur par défaut en 2e argument). Aucun identifiant n'est en dur dans le dépôt : `copo()` lit `CAULIS_RENVIRON`, qui pointe vers le `.Renviron` externe contenant `PGUSER`/`PGPASSWORD`.
 
 ## Outils projet (hors build du package)
 

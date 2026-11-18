@@ -9,16 +9,16 @@ if(!require("readxl")){install.packages("readxl")} ; library("readxl")
 if(!require("tidyverse")){install.packages("tidyverse")} ; library("tidyverse")
 if(!require("remotes")){install.packages("remotes")} ; library("remotes")
 if(!require("rtaxref")){install_github("Rekyt/rtaxref")} ; library("rtaxref")
-source("function/taxabase.R")
+library(caulis)
 
 #Chargement de baseflor
-baseflor <- read_excel("data/catminat/baseflor.xlsx")
+baseflor <- read_excel(file.path(Sys.getenv("CAULIS_DATA_DIR", unset = "data"), "catminat/baseflor.xlsx"))
 
 #Chargement de basebryo
-basebryo <- read_excel("data/catminat/basebryo.xlsx")
+basebryo <- read_excel(file.path(Sys.getenv("CAULIS_DATA_DIR", unset = "data"), "catminat/basebryo.xlsx"))
 
 #Chargement de TAXREF
-load_data("TAXREF_17","data/TAXREF_17/TAXREFv17_FLORE_FR_SYN.csv",sep=",")
+load_data("TAXREF_17",file.path(Sys.getenv("CAULIS_DATA_DIR", unset = "data"), "TAXREF_17/TAXREFv17_FLORE_FR_SYN.csv"),sep=",")
 
 #Ajustement des noms de colonnes de basebryo
 colnames(basebryo)[3] = "code_CATMINAT"
@@ -93,12 +93,12 @@ for (i in 1:nrow(baseflor_bryo)){
 difference = baseflor_bryo[baseflor_bryo$NOM_VALIDE!=baseflor_bryo$NOM_SIMPLE,]
 view(difference)
 
-write.csv(baseflor_bryo,"data/catminat/baseflor_bryo.csv",fileEncoding = "UTF-8",row.names = F)
-# baseflor_bryo = read.csv("data/catminat/baseflor_bryo.csv",h=T)
+write.csv(baseflor_bryo,file.path(Sys.getenv("CAULIS_DATA_DIR", unset = "data"), "catminat/baseflor_bryo.csv"),fileEncoding = "UTF-8",row.names = F)
+# baseflor_bryo = read.csv(file.path(Sys.getenv("CAULIS_DATA_DIR", unset = "data"), "catminat/baseflor_bryo.csv"),h=T)
 
 ######## Prise en compte du correctif de baseflore_bryo
 # Chargement du correctif
-Correctif_baseflor_bryo <- read_excel("data/catminat/Correctif_baseflor_bryo.xlsx")
+Correctif_baseflor_bryo <- read_excel(file.path(Sys.getenv("CAULIS_DATA_DIR", unset = "data"), "catminat/Correctif_baseflor_bryo.xlsx"))
 
 #Boucle de correction
 for(i in 1:nrow(Correctif_baseflor_bryo)){
@@ -117,5 +117,5 @@ for(i in 1:nrow(Correctif_baseflor_bryo)){
 
 
 # Enregistrer le fichier final
-write.csv2(baseflor_bryo,"data/catminat/baseflor_bryoTAXREFv17.csv",row.names = F,fileEncoding = "UTF-8",na="")
+write.csv2(baseflor_bryo,file.path(Sys.getenv("CAULIS_DATA_DIR", unset = "data"), "catminat/baseflor_bryoTAXREFv17.csv"),row.names = F,fileEncoding = "UTF-8",na="")
 

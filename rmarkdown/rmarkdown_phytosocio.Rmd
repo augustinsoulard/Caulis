@@ -11,8 +11,8 @@ output:
 if(!require("tidyverse")) install.packages("tidyverse")
 library(tidyverse)
 
-if(!require("caulisroot")) devtools::install("../caulisroot")
-library(caulisroot)
+library(caulis)
+library(caulis)
 
 library(ggplot2)
 library(forcats)
@@ -68,7 +68,7 @@ WHERE t2."cd_typo" IN (\'4\', \'7\', \'8\', \'22\', \'18\', \'28\', \'107\', \'1
 habref_esp <- rarete_occurence(habref_esp)
 
 # Charger les données QBiome
-charger_gpkg(layers = c("Flore", "Releve_Phyto"),"D:/TEMP/Donnees.gpkg") 
+charger_gpkg(layers = c("Flore", "Releve_Phyto"), file.path(Sys.getenv("CAULIS_TEMP"), "Donnees.gpkg"))
 
 # Ajouter cd_nom
 Flore <- findtaxa("Nom", Flore)

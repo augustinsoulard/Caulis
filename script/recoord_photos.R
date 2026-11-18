@@ -48,7 +48,7 @@ photo = data_wgs84
 #suppression des NA :
 photo = photo[!is.na(photo$nom_fichier),]
 
-exiftool_path <- "D:/Logiciel/ExifTool/exiftool.exe"
+exiftool_path <- Sys.getenv("CAULIS_EXIFTOOL", unset = "exiftool") # chemin exiftool.exe défini dans le .env
 # Boucle pour modifier les métadonnées GPS de chaque photo
 for (i in seq_along(photos)) {
   # Nom du fichier photo sans le chemin complet

@@ -1,9 +1,5 @@
 if(!require("tidyverse")){install.packages("tidyverse")} ; library("tidyverse")
-if(!require("caulisroot")){devtools::install("../caulisroot")} ; library("caulisroot")
-
-source("function/postgres/postgres_manip.R")
-source("function/taxabase.R")
-source("function/habitats/habref_manip.R")
+library(caulis)
 
 con = copo() # Connexion à la bdd
 

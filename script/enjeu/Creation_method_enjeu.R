@@ -22,7 +22,7 @@ BDC_STATUTS_17 <- read.csv("BDC-Statuts-v17/BDC_STATUTS_17.csv")
 
 
 # Import de TAXREFv17
-TAXREFv17_FLORE_FR <- read.csv("data/TAXREF_17/TAXREFv17_FLORE_FR.csv")
+TAXREFv17_FLORE_FR <- read.csv(file.path(Sys.getenv("CAULIS_DATA_DIR", unset = "data"), "TAXREF_17/TAXREFv17_FLORE_FR.csv"))
 TAXREFv17_FLORE_FR$CD_NOM = as.character(TAXREFv17_FLORE_FR$CD_NOM)
 
 # Filtre de la base de connaissance pour la flore

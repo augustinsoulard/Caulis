@@ -1,5 +1,5 @@
 if(!require("sf")){install.packages("sf")} ; library("sf")
-source("function/taxabase.R")
+library(caulis)
 
 ############## CHOIX DU FICHIER SHP
 shp = "Flore/FloreGBIF.shp"

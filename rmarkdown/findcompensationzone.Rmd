@@ -74,7 +74,7 @@ suppressPackageStartupMessages({
   library(glue)
   library(purrr)
   library(tmap)
-  library(caulisroot)
+  library(caulis)
   library(knitr)
   library(scales)      # pour rescale
   library(RColorBrewer) 
@@ -87,7 +87,7 @@ con = copo()
 # 3. Paramètres de travail et répertoire
 
 ```{r workdir}
-workdir <- "G:/Drive partagés/BIODIV/1_CLIENTS/CDC_BIODIVERSITE/2025_cdc_biodiversite/44_cdc_biodiversite_corisperme_2025/CARTO"
+workdir <- file.path(Sys.getenv("CAULIS_DRIVE_PARTAGE"), "BIODIV/1_CLIENTS/CDC_BIODIVERSITE/2025_cdc_biodiversite/44_cdc_biodiversite_corisperme_2025/CARTO")
 out_dir <- file.path(workdir, "outputs")
 dir.create(out_dir, showWarnings = FALSE, recursive = TRUE)
 

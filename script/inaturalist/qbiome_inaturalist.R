@@ -1,7 +1,6 @@
 if(!require("sf")){install.packages("sf")} ; library("sf")
 if(!require("tidyverse")){install.packages("tidyverse")} ; library("tidyverse")
-source("R/postgres/postgres_manip.R")
-library(caulisroot)
+library(caulis)
 
 con = copo() # Connexion à la bdd
 # Lecture des observation via INaturalist ou un fichier téléchargé ####

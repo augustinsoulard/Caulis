@@ -10,9 +10,9 @@
 #' @export
 taxon_hab = function(FCD_TYPO = "28"){
   
-  load_data("TYPOREF_70", "data/HABREF_70/TYPOREF_70.csv")
-  load_data("HABREF_70", "data/HABREF_70/HABREF_70.csv")
-  load_data("HABREF_CORRESP_TAXON_70","data/HABREF_70/HABREF_CORRESP_TAXON_70.csv")
+  load_data("TYPOREF_70", file.path(caulis_env("CAULIS_DATA_DIR", "data"), "HABREF_70/TYPOREF_70.csv"))
+  load_data("HABREF_70", file.path(caulis_env("CAULIS_DATA_DIR", "data"), "HABREF_70/HABREF_70.csv"))
+  load_data("HABREF_CORRESP_TAXON_70",file.path(caulis_env("CAULIS_DATA_DIR", "data"), "HABREF_70/HABREF_CORRESP_TAXON_70.csv"))
   
   typo = HABREF_70 %>% filter(CD_TYPO %in% FCD_TYPO)
   
@@ -65,8 +65,8 @@ find_taxon_hab <- function(taxa_search,
 hab_join = function(liste_CD_HAB,
                     FCD_TYPO=28){
   
-  load_data("HABREF_CORRESP_HAB_70", "data/HABREF_70/HABREF_CORRESP_HAB_70.csv")
-  load_data("HABREF_70", "data/HABREF_70/HABREF_70.csv")
+  load_data("HABREF_CORRESP_HAB_70", file.path(caulis_env("CAULIS_DATA_DIR", "data"), "HABREF_70/HABREF_CORRESP_HAB_70.csv"))
+  load_data("HABREF_70", file.path(caulis_env("CAULIS_DATA_DIR", "data"), "HABREF_70/HABREF_70.csv"))
   data_CD_HAB = data.frame(CD_HAB_ENTRE = liste_CD_HAB)
   
   # if(FCD_TYPO!=107){

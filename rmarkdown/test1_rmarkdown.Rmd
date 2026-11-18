@@ -6,7 +6,7 @@ output:
   officedown::rdocx_document:
     reference_docx: "../style/word_styles_references.dotm"
 params:
-  photo_base_path: "G:/Drive partagés/BIODIV/1_CLIENTS/AGENCE_MTDA/2025/39_PG_BV_LEZ_EEE_2025/CARTO/DCIM/"
+  photo_base_path: !expr file.path(Sys.getenv("CAULIS_DRIVE_PARTAGE"), "BIODIV/1_CLIENTS/AGENCE_MTDA/2025/39_PG_BV_LEZ_EEE_2025/CARTO/DCIM/")
 
 ---
 

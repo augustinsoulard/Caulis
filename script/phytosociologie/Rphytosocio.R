@@ -49,7 +49,7 @@ DATAPHYTO = DATAPHYTO[DATAPHYTO$REL_ZH == "Oui",]
 
 
 #Calcule des indices écologiques sans pondération de recouvrement
-source("R_script/indiceEcoReleve.R")
+source(file.path("script", "phytosociologie", "indiceEcoReleve.R"))
 }
 
 
@@ -77,10 +77,10 @@ if(protocole == "sigm"){
   
   
   # ANALYSE PAR STRATE !
-  source("R_script/Pluristrate.R")
+  source(file.path("script", "phytosociologie", "Pluristrate.R"))
   
   # ANALYSE TOUTES STRATES CONFONDUES
-  source("R_script/Monostrate.R")
+  source(file.path("script", "phytosociologie", "Monostrate.R"))
   
   ################################################################################
   ###################CREATION DU FICHIER RMARKDOWN################################

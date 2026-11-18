@@ -12,15 +12,17 @@
 
 copo = function(){ #COnnexion à la bdd POstgres
   # Préparation de la BDD ####
-  ### Déclaraiton des variables d'environnement pour l'authentification ####
-  if (file.exists("D:/Logiciel/R/.Renviron")) {
-    Sys.setenv(R_ENVIRON = "D:/NextCloud/Documents/A_PERSO/Administratif/hz/.Renviron")
-    readRenviron(Sys.getenv("R_ENVIRON"))
-  } else {
-    stop("Le fichier .Renviron n'existe pas ou n'est pas accessible.")
+  ### Déclaration des variables d'environnement pour l'authentification ####
+  # Le chemin du fichier des secrets (.Renviron : PGUSER, PGPASSWORD, clés API)
+  # est lu dans la variable d'environnement CAULIS_RENVIRON (voir .env / .env.example)
+  chemin_renviron <- caulis_env("CAULIS_RENVIRON")
+  if (!nzchar(chemin_renviron) || !file.exists(chemin_renviron)) {
+    stop("Variable CAULIS_RENVIRON non définie ou fichier introuvable : '", chemin_renviron,
+         "'. Définissez-la dans le fichier .env du projet (voir .env.example).")
   }
-  readRenviron(Sys.getenv("R_ENVIRON"))
-  Sys.setenv(PGUSER = Sys.getenv("PGUSER"), PGPASSWORD = Sys.getenv("PGPASSWORD")) # Lancer cette commade avec les bons indentifiant
+  Sys.setenv(R_ENVIRON = chemin_renviron)
+  readRenviron(chemin_renviron)
+  Sys.setenv(PGUSER = Sys.getenv("PGUSER"), PGPASSWORD = Sys.getenv("PGPASSWORD"))
 
 
   ### Chargement des packages ####
